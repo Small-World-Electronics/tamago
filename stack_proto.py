@@ -39,41 +39,58 @@ def PUSH(i):
     stack.append(i)
 
 def ADD():
-    a = POP()
     b = POP()
-    PUSH(b + a)
+    a = POP()
+    PUSH(a + b)
 
 def SUB():
-    a = POP()
     b = POP()
-    PUSH(b - a)
+    a = POP()
+    PUSH(a - b)
 
 def MUL():
-    a = POP()
     b = POP()
-    PUSH(b * a)
+    a = POP()
+    PUSH(a * b)
 
 def DIV():
-    a = POP()
     b = POP()
-    PUSH(b // a)
-
-def SHL(i):
     a = POP()
-    a = a << i
+    PUSH(a // b)
+
+def SHL():
+    b = POP()
+    a = POP()
+    a = a << b
     PUSH(a)
 
-def SHR(i):
+def SHR():
+    b = POP()
     a = POP()
-    a = a >> i
+    a = a >> b
+    PUSH(a)
+
+def MOD():
+    b = POP()
+    a = POP()
+    a = a % b
+    PUSH(a)
+
+def DUP():
+    a = POP()
+    PUSH(a)
     PUSH(a)
 
 def PRINT():
     print(stack)
 
-def midiPop():
+def MIDION():
     a = POP()
     controller.note_on(a, velocity = 100)
+
+def MIDIOFF():
+    a = POP()
+    controller.note_off(a)
 
 def midiInit():
     midi.init()
@@ -86,7 +103,9 @@ def midiClose():
     controller.close()
 
 mapping = {"POP": POP, "PUSH": PUSH, "ADD": ADD, "SUB": SUB,
-           "MUL": MUL, "DIV": DIV, "SHL": SHL, "SHR": SHR, "PRINT": PRINT}
+           "MUL": MUL, "DIV": DIV, "SHL": SHL, "SHR": SHR,
+           "MOD": MOD, "PRINT": PRINT, "DUP": DUP, "MIDION": MIDION,
+           "MIDIOFF": MIDIOFF}
 
 def fileParse():
     # get file by lines and split on spaces or tabs
@@ -112,6 +131,8 @@ def fileParse():
     f.close()
         
 def main():
+    midiInit()
+    
     global prog
     commands = []
     fileParse()
