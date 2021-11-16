@@ -1,11 +1,34 @@
 import pygame.midi as midi
 import re
 import time
+import os
+import win32file
+import msvcrt
 
 stack = []
 controller = None
 f = None
 prog = None
+
+filename = 'prog.txt'
+
+# black magic to allow editing a file on windows while its open in python
+#handle = win32file.CreateFile(filename,
+ #                               win32file.GENERIC_READ,
+  #                              win32file.FILE_SHARE_DELETE |
+   #                             win32file.FILE_SHARE_READ |
+    #                            win32file.FILE_SHARE_WRITE,
+     #                           None,
+      #                          win32file.OPEN_EXISTING,
+       #                         0,
+        #                        None)
+
+# detach the handle
+#detached_handle = handle.Detach()
+
+# get a file descriptor associated to the handle
+#file_descriptor = msvcrt.open_osfhandle(
+ #S   detached_handle, os.O_RDONLY)
 
 def POP():
     a = stack.pop()
@@ -62,10 +85,6 @@ def midiInit():
 def midiClose():
     controller.close()
 
-def fileInit():
-    global f
-    f = open("prog.txt")
-
 mapping = {"POP": POP, "PUSH": PUSH, "ADD": ADD, "SUB": SUB,
            "MUL": MUL, "DIV": DIV, "SHL": SHL, "SHR": SHR, "PRINT": PRINT}
 
@@ -73,8 +92,9 @@ def fileParse():
     # get file by lines and split on spaces or tabs
     global f
     global prog
+    f = open(filename)
     f.seek(0)
-    lines = f.readlines()
+    lines = f.read().splitlines()
     for i in range(len(lines)):
         lines[i] = re.split('[ |\t]', lines[i])
 
@@ -89,17 +109,18 @@ def fileParse():
             else:
                 subprog.append(mapping[item])
         prog.append(subprog)
+    f.close()
         
 def main():
     global prog
     commands = []
-    fileInit()
+    fileParse()
     while(True):
-        fileParse()
         for line in prog:
             for command in line:
                 if(type(command) is int):
                     PUSH(command)
                 else:
                     command()
-        time.sleep(500 / 1000)
+            fileParse()
+            time.sleep(500 / 1000)
