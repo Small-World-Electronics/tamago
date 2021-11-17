@@ -12,6 +12,8 @@ prog = None
 
 filename = 'prog.txt'
 
+delay = .5
+
 # black magic to allow editing a file on windows while its open in python
 #handle = win32file.CreateFile(filename,
  #                               win32file.GENERIC_READ,
@@ -84,6 +86,11 @@ def DUP():
 def PRINT():
     print(stack)
 
+def BPM():
+    a = POP()
+    global delay
+    delay = 60.0 / a
+
 def MIDION():
     a = POP()
     controller.note_on(a, velocity = 100)
@@ -105,7 +112,7 @@ def midiClose():
 mapping = {"POP": POP, "PUSH": PUSH, "ADD": ADD, "SUB": SUB,
            "MUL": MUL, "DIV": DIV, "SHL": SHL, "SHR": SHR,
            "MOD": MOD, "PRINT": PRINT, "DUP": DUP, "MIDION": MIDION,
-           "MIDIOFF": MIDIOFF}
+           "MIDIOFF": MIDIOFF, "BPM": BPM}
 
 def fileParse():
     # get file by lines and split on spaces or tabs
@@ -144,4 +151,4 @@ def main():
                 else:
                     command()
             fileParse()
-            time.sleep(500 / 1000)
+            time.sleep(delay)
