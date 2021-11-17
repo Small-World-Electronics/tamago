@@ -4,33 +4,17 @@ import time
 import os
 import win32file
 import msvcrt
+from tkinter import *
 
+ws = None
+text_box = None
 stack = []
 controller = None
-f = None
 prog = None
 
 filename = 'prog.txt'
 
 delay = .5
-
-# black magic to allow editing a file on windows while its open in python
-#handle = win32file.CreateFile(filename,
- #                               win32file.GENERIC_READ,
-  #                              win32file.FILE_SHARE_DELETE |
-   #                             win32file.FILE_SHARE_READ |
-    #                            win32file.FILE_SHARE_WRITE,
-     #                           None,
-      #                          win32file.OPEN_EXISTING,
-       #                         0,
-        #                        None)
-
-# detach the handle
-#detached_handle = handle.Detach()
-
-# get a file descriptor associated to the handle
-#file_descriptor = msvcrt.open_osfhandle(
- #S   detached_handle, os.O_RDONLY)
 
 def POP():
     a = stack.pop()
@@ -105,6 +89,14 @@ def midiInit():
     # hardcoded loopmidi port for now
     global controller
     controller = midi.Output(3)
+
+def graphicsInit():
+    global ws
+    global text_box
+    ws = Tk()
+    ws.geometry('700x700')
+    text_box = Text(ws,height=50,width=100)
+    text_box.pack(expand=True)
     
 def midiClose():
     controller.close()
@@ -115,13 +107,11 @@ mapping = {"POP": POP, "PUSH": PUSH, "ADD": ADD, "SUB": SUB,
            "MOD": MOD, "PRINT": PRINT, "DUP": DUP, "MIDION": MIDION,
            "MIDIOFF": MIDIOFF, "BPM": BPM}
 
-def fileParse():
+def Parse():
     # get file by lines and split on spaces or tabs
-    global f
     global prog
-    f = open(filename)
-    f.seek(0)
-    lines = f.read().splitlines()
+    data = text_box.get("1.0",END)
+    lines = data.splitlines()
     for i in range(len(lines)):
         lines[i] = re.split('[ |\t]', lines[i])
 
@@ -136,20 +126,23 @@ def fileParse():
             else:
                 subprog.append(mapping[item])
         prog.append(subprog)
-    f.close()
-        
-def main():
-    midiInit()
     
+def Init():
+    midiInit()
+    graphicsInit()
+
+def Run():    
     global prog
     commands = []
-    fileParse()
+    Parse()
     while(True):
+        ws.update_idletasks()
+        ws.update()
         for line in prog:
             for command in line:
                 if(type(command) is int):
                     PUSH(command)
                 else:
                     command()
-            fileParse()
+            Parse()
             time.sleep(delay)
