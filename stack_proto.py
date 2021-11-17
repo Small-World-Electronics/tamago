@@ -108,6 +108,7 @@ def midiInit():
     
 def midiClose():
     controller.close()
+    midi.quit()
 
 mapping = {"POP": POP, "PUSH": PUSH, "ADD": ADD, "SUB": SUB,
            "MUL": MUL, "DIV": DIV, "SHL": SHL, "SHR": SHR,
