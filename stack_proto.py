@@ -10,13 +10,15 @@ ws = None
 text_box = None
 stack = []
 controller = None
-prog = None
+prog = []
 
 filename = 'prog.txt'
 
 delay = .5
 
 def POP():
+    if(stack == []):
+        return # short circuit if stack is empty
     a = stack.pop()
     return a
 
@@ -25,44 +27,60 @@ def PUSH(i):
     stack.append(i)
 
 def ADD():
+    if(len(stack) < 2):
+        return
     b = POP()
     a = POP()
     PUSH(a + b)
 
 def SUB():
+    if(len(stack) < 2):
+        return
     b = POP()
     a = POP()
     PUSH(a - b)
 
 def MUL():
+    if(len(stack) < 2):
+        return
     b = POP()
     a = POP()
     PUSH(a * b)
 
 def DIV():
+    if(len(stack) < 2):
+        return
     b = POP()
     a = POP()
     PUSH(a // b)
 
 def SHL():
+    if(len(stack) < 2):
+        return
     b = POP()
     a = POP()
     a = a << b
     PUSH(a)
 
 def SHR():
+    if(len(stack) < 2):
+        return
     b = POP()
     a = POP()
     a = a >> b
     PUSH(a)
 
 def MOD():
+    if(len(stack) < 2):
+        return
     b = POP()
     a = POP()
     a = a % b
     PUSH(a)
 
 def DUP():
+    if(len(stack) < 1):
+        return
     a = POP()
     PUSH(a)
     PUSH(a)
@@ -71,17 +89,31 @@ def PRINT():
     print(stack)
 
 def BPM():
+    if(len(stack) < 1):
+        return
     a = POP()
     global delay
     delay = 60.0 / a
 
 def MIDION():
+    if(len(stack) < 1):
+        return
     a = POP()
     controller.note_on(a, velocity = 100)
 
 def MIDIOFF():
+    if(len(stack) < 1):
+        return
     a = POP()
     controller.note_off(a)
+
+def SWP():
+    if(len(stack) < 2):
+        return
+    a = POP()
+    b = POP()
+    PUSH(a)
+    PUSH(b)
 
 def midiInit():
     midi.init()
@@ -105,27 +137,41 @@ def midiClose():
 mapping = {"POP": POP, "PUSH": PUSH, "ADD": ADD, "SUB": SUB,
            "MUL": MUL, "DIV": DIV, "SHL": SHL, "SHR": SHR,
            "MOD": MOD, "PRINT": PRINT, "DUP": DUP, "MIDION": MIDION,
-           "MIDIOFF": MIDIOFF, "BPM": BPM}
+           "MIDIOFF": MIDIOFF, "BPM": BPM, "SWP": SWP}
 
 def Parse():
-    # get file by lines and split on spaces or tabs
     global prog
     data = text_box.get("1.0",END)
+    
+    # split into lines then tokenize
     lines = data.splitlines()
     for i in range(len(lines)):
         lines[i] = re.split('[ |\t]', lines[i])
 
+    temp_prog = []
+
+    # short circuit on empty code
+    if(lines == [['']]):
+        return
+
     # match tokens with commands from dict or data
-    prog = []
     for i in lines:
         subprog = []
         for j in range(len(i)):
             item = i[j]
-            if(item[0] == '#'):
-                subprog.append(int(item[1:], 16))
+            if(item == ''):
+                return # short citcuit on empty item
+            elif(item[0] == '#'):
+                try:
+                    subprog.append(int(item[1:], 16))
+                except:
+                    continue
+            elif item in mapping:
+                subprog.append(mapping[item])                
             else:
-                subprog.append(mapping[item])
-        prog.append(subprog)
+                return # short circuit on bad command name
+        temp_prog.append(subprog)
+    prog = temp_prog.copy()
     
 def Init():
     midiInit()
@@ -138,13 +184,13 @@ def ExecuteLine(linenum):
             PUSH(command)
         else:
             command()
-    
 
 now = time.time()
 def Run():    
     global prog
     global now
-    
+
+    prog = []
     commands = []
     linenum = 0
     while(True):
@@ -154,6 +200,11 @@ def Run():
 
         nownow = time.time()
         if(nownow - now >= delay):
-            now = nownow
-            linenum = (linenum + 1) % len(prog)
-            ExecuteLine(linenum)
+            if(len(prog) > 0):
+                now = nownow
+                linenum = (linenum + 1) % len(prog)
+                ExecuteLine(linenum)
+
+def main():
+    Init()
+    Run()
