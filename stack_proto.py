@@ -131,18 +131,29 @@ def Init():
     midiInit()
     graphicsInit()
 
+def ExecuteLine(linenum):
+    global prog
+    for command in prog[linenum]:
+        if(type(command) is int):
+            PUSH(command)
+        else:
+            command()
+    
+
+now = time.time()
 def Run():    
     global prog
+    global now
+    
     commands = []
-    Parse()
+    linenum = 0
     while(True):
+        Parse()
         ws.update_idletasks()
         ws.update()
-        for line in prog:
-            for command in line:
-                if(type(command) is int):
-                    PUSH(command)
-                else:
-                    command()
-            Parse()
-            time.sleep(delay)
+
+        nownow = time.time()
+        if(nownow - now >= delay):
+            now = nownow
+            linenum = (linenum + 1) % len(prog)
+            ExecuteLine(linenum)
