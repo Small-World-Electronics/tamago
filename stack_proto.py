@@ -11,6 +11,7 @@ text_box = None
 stack = []
 controller = None
 prog = []
+memory = [0 for i in range(256)]
 
 filename = 'prog.txt'
 
@@ -129,6 +130,21 @@ def SWP():
     PUSH(a)
     PUSH(b)
 
+def STA():
+    if(len(stack) < 2):
+        return
+    add = POP()
+    val = POP()
+    if(add < 0 or add > 255):
+        return # only allowing 255 vars for now
+    memory[add] = val
+
+def LDA():
+    if(len(stack) < 1):
+        return
+    add = POP()
+    PUSH(memory[add])
+    
 def midiInit():
     midi.init()
 
@@ -151,7 +167,8 @@ def midiClose():
 mapping = {"POP": POP, "PUSH": PUSH, "ADD": ADD, "SUB": SUB,
            "MUL": MUL, "DIV": DIV, "SHL": SHL, "SHR": SHR,
            "MOD": MOD, "PRINT": PRINT, "DUP": DUP, "MIDION": MIDION,
-           "MIDIOFF": MIDIOFF, "BPM": BPM, "SWP": SWP}
+           "MIDIOFF": MIDIOFF, "BPM": BPM, "SWP": SWP, "STA": STA,
+           "LDA": LDA}
 
 def Parse():
     global prog
