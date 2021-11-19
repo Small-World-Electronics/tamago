@@ -52,6 +52,13 @@ def DIV():
         return
     b = POP()
     a = POP()
+
+    # short circuit on divide by 0
+    if(b == 0):
+        PUSH(a)
+        PUSH(b)
+        return
+    
     PUSH(a // b)
 
 def SHL():
@@ -75,6 +82,13 @@ def MOD():
         return
     b = POP()
     a = POP()
+    
+    # short circuit on divide by 0
+    if(b == 0):
+        PUSH(a)
+        PUSH(b)
+        return
+
     a = a % b
     PUSH(a)
 
