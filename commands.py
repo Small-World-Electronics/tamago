@@ -87,13 +87,6 @@ def DUP():
 def PRINT():
     print(stack)
 
-def BPM():
-    if(len(stack) < 1):
-        return
-    a = POP()
-    global delay
-    delay = 60.0 / a
-
 def SWP():
     if(len(stack) < 2):
         return

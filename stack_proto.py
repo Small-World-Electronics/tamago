@@ -16,6 +16,16 @@ filename = 'prog.txt'
 
 delay = .5
 
+def BPM():
+    if(len(commands.stack) < 1):
+        return
+    a = commands.POP()
+    if(a == 0):
+        commands.PUSH(a) # divide by short circuit
+        return
+    global delay
+    delay = 60.0 / a
+
 def MIDION():
     if(len(commands.stack) < 1):
         return
@@ -50,8 +60,8 @@ def midiClose():
 
 mapping = {"POP": commands.POP, "PUSH": commands.PUSH, "ADD": commands.ADD, "SUB": commands.SUB,
            "MUL": commands.MUL, "DIV": commands.DIV, "SHL": commands.SHL, "SHR": commands.SHR,
-           "MOD": commands.MOD, "PRINT": commands.PRINT, "DUP": commands.DUP, "MIDION": commands.MIDION,
-           "MIDIOFF": commands.MIDIOFF, "BPM": commands.BPM, "SWP": commands.SWP, "STA": commands.STA,
+           "MOD": commands.MOD, "PRINT": commands.PRINT, "DUP": commands.DUP, "MIDION": MIDION,
+           "MIDIOFF": MIDIOFF, "BPM": BPM, "SWP": commands.SWP, "STA": commands.STA,
            "LDA": commands.LDA}
 
 def Parse():
