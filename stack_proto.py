@@ -1,3 +1,5 @@
+#　スタック　★　スタック　★　スタック　#
+
 import pygame.midi as midi
 import re
 import time
@@ -13,6 +15,18 @@ prog = []
 filename = 'prog.txt'
 
 delay = .5
+
+def MIDION():
+    if(len(commands.stack) < 1):
+        return
+    a = commands.POP()
+    controller.note_on(a, velocity = 100)
+
+def MIDIOFF():
+    if(len(commands.stack) < 1):
+        return
+    a = commands.POP()
+    controller.note_off(a)
 
 def midiInit():
     midi.init()

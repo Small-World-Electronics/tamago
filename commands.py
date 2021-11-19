@@ -94,18 +94,6 @@ def BPM():
     global delay
     delay = 60.0 / a
 
-def MIDION():
-    if(len(stack) < 1):
-        return
-    a = POP()
-    controller.note_on(a, velocity = 100)
-
-def MIDIOFF():
-    if(len(stack) < 1):
-        return
-    a = POP()
-    controller.note_off(a)
-
 def SWP():
     if(len(stack) < 2):
         return
