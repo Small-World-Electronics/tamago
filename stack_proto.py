@@ -56,10 +56,13 @@ def midiClose():
     midi.quit()
 
 mapping = {"POP": commands.POP, "PUSH": commands.PUSH, "ADD": commands.ADD, "SUB": commands.SUB,
-           "MUL": commands.MUL, "DIV": commands.DIV, "SHL": commands.SHL, "SHR": commands.SHR,
-           "MOD": commands.MOD, "PRINT": commands.PRINT, "DUP": commands.DUP, "MIDION": MIDION,
-           "MIDIOFF": MIDIOFF, "BPM": BPM, "SWP": commands.SWP, "STA": commands.STA,
-           "LDA": commands.LDA}
+            "MUL": commands.MUL, "DIV": commands.DIV, "SHL": commands.SHL, "SHR": commands.SHR,
+            "MOD": commands.MOD, "PRINT": commands.PRINT, "DUP": commands.DUP, "MIDION": MIDION,
+            "MIDIOFF": MIDIOFF, "BPM": BPM, "SWP": commands.SWP, "STA": commands.STA,
+            "LDA": commands.LDA, "INC": commands.INC, "DEC": commands.DEC, "NIP": commands.NIP,
+            "OVR": commands.OVR, "ROT": commands.ROT, "EQU": commands.EQU, "NEQ": commands.NEQ,
+            "GTH": commands.GTH, "LTH": commands.LTH, "AND": commands.AND, "ORA": commands.ORA,
+            "EOR": commands.EOR, "XOR": commands.XOR}
 
 # given a string, split it at the first space or tab
 def SingleToken(data):

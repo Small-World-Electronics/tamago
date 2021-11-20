@@ -155,28 +155,28 @@ def EQU():
         return
     b = POP()
     a = POP()
-    PUSH(a == b)
+    PUSH(int(a == b))
 
 def NEQ():
     if(len(stack) < 2):
         return
     b = POP()
     a = POP()
-    PUSH(a != b)
+    PUSH(int(a != b))
 
 def GTH():
     if(len(stack) < 2):
         return
     b = POP()
     a = POP()
-    PUSH(a > b)
+    PUSH(int(a > b))
 
 def LTH():
     if(len(stack) < 2):
         return
     b = POP()
     a = POP()
-    PUSH(a < b)
+    PUSH(int(a < b))
 
 def AND():
     if(len(stack) < 2):
@@ -202,3 +202,4 @@ def EOR():
 # I like this name better. Probably confusing to have two...
 def XOR():
     EOR()
+
