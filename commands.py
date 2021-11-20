@@ -109,3 +109,96 @@ def LDA():
         return
     add = POP()
     PUSH(memory[add])
+
+def INC():
+    if(len(stack) < 1):
+        return
+    a = POP() + 1
+    PUSH(a)
+
+def DEC():
+    if(len(stack) < 1):
+        return
+    a = POP() - 1
+    PUSH(a)
+
+def NIP():
+    if(len(stack) < 2):
+        return    
+    a = POP()
+    POP()
+    PUSH(a)
+
+# a b -- a b a
+def OVR():
+    if(len(stack) < 2):
+        return    
+    b = POP()
+    a = POP()
+    PUSH(a)
+    PUSH(b)
+    PUSH(a)
+
+# a b c -- b c a
+def ROT():
+    if(len(stack) < 3):
+        return    
+    c = POP()
+    b = POP()
+    a = POP()
+    PUSH(b)
+    PUSH(c)
+    PUSH(a)
+
+def EQU():
+    if(len(stack) < 2):
+        return
+    b = POP()
+    a = POP()
+    PUSH(a == b)
+
+def NEQ():
+    if(len(stack) < 2):
+        return
+    b = POP()
+    a = POP()
+    PUSH(a != b)
+
+def GTH():
+    if(len(stack) < 2):
+        return
+    b = POP()
+    a = POP()
+    PUSH(a > b)
+
+def LTH():
+    if(len(stack) < 2):
+        return
+    b = POP()
+    a = POP()
+    PUSH(a < b)
+
+def AND():
+    if(len(stack) < 2):
+        return
+    b = POP()
+    a = POP()
+    PUSH(a & b)
+
+def ORA():
+    if(len(stack) < 2):
+        return
+    b = POP()
+    a = POP()
+    PUSH(a | b)
+
+def EOR():
+    if(len(stack) < 2):
+        return
+    b = POP()
+    a = POP()
+    PUSH(a ^ b)
+
+# I like this name better. Probably confusing to have two...
+def XOR():
+    EOR()

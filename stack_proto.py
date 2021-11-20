@@ -149,8 +149,6 @@ def Parse():
     # strip out empty commands
     lines[:] = [[x for x in y if x != ''] for y in lines]
 
-
-
     # match tokens with commands from dict or data
     for i in lines:
         commands.subprog = []
@@ -187,7 +185,6 @@ def Run():
     global prog, now
 
     prog = []
-    commands = []
     linenum = 0
     while(True):
         Parse()
