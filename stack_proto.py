@@ -5,6 +5,7 @@ import re
 import time
 from tkinter import *
 import commands
+from threading import Timer
 
 tk = None
 prog_box = None
@@ -26,16 +27,26 @@ def BPM():
     delay = 60.0 / a
 
 def MIDION():
+    global delay, midi_len
     if(len(commands.stack) < 1):
         return
     a = commands.POP()
-    controller.note_on(a, velocity = 100)
+
+    controller.note_on(a, velocity = commands.midi_vel, channel = commands.midi_chn)
+
+    # kill the note after a delay
+    # this won't work right if call BPM before the cb triggers
+    timer = Timer(delay * commands.midi_len, noteOff, args = [a])
+    timer.start()
 
 def MIDIOFF():
     if(len(commands.stack) < 1):
         return
     a = commands.POP()
     controller.note_off(a)
+
+def noteOff(note):
+    controller.note_off(note)
 
 def midiInit():
     midi.init()
@@ -62,7 +73,8 @@ mapping = {"POP": commands.POP, "PUSH": commands.PUSH, "ADD": commands.ADD, "SUB
             "LDA": commands.LDA, "INC": commands.INC, "DEC": commands.DEC, "NIP": commands.NIP,
             "OVR": commands.OVR, "ROT": commands.ROT, "EQU": commands.EQU, "NEQ": commands.NEQ,
             "GTH": commands.GTH, "LTH": commands.LTH, "AND": commands.AND, "ORA": commands.ORA,
-            "EOR": commands.EOR, "XOR": commands.XOR}
+            "EOR": commands.EOR, "XOR": commands.XOR, "VEL": commands.VEL, "CHN": commands.CHN,
+            "LEN": commands.LEN}
 
 # given a string, split it at the first space or tab
 def SingleToken(data):
@@ -202,5 +214,9 @@ def Run():
                 ExecuteLine(linenum)
 
 def main():
+    try:
+        midiClose()
+    except:
+        pass
     Init()
     Run()
