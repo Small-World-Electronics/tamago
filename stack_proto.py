@@ -77,6 +77,7 @@ def goto(a):
         for comm in prog[line]:
             if(comm == a):
                 linenum = line
+                linenum -= 1 # counteract auto increment
                 return
     print('no such label')
 
@@ -93,6 +94,12 @@ def graphicsInit():
     tk.geometry('700x700')
     prog_box = Text(tk,height=20,width=100)
     prog_box.pack(expand=True)
+    butt = Button(tk, text="Run", command=top)
+    butt.pack()
+
+def top():
+    global linenum
+    linenum = 0
 
 def midiClose():
     controller.close()
@@ -233,9 +240,9 @@ def ExecuteLine():
             if(command[0] == '@'):
                 continue # skip labels
             elif(command[0] == ';'):
-                commands.PUSH(command) # push 'rel add' onto stack
+                commands.PUSH(command) # push 'rel addr' onto stack
         elif(command == JMP or command == JCN):
-            command() 
+            command()
             return # jump ends clock cycle
         else:
             command() # run commands
@@ -246,7 +253,6 @@ def Run():
     global prog, now, linenum
 
     prog = []
-    linenum = 0
     while(True):
         Parse()
         tk.update_idletasks()
@@ -256,8 +262,11 @@ def Run():
         if(nownow - now >= delay):
             if(len(prog) > 0):
                 now = nownow
-                linenum = (linenum + 1) % len(prog)
-                ExecuteLine()
+                if(linenum >= len(prog)):
+                    linenum = len(prog)
+                else:
+                    ExecuteLine()
+                    linenum += 1
             else:
                 linenum = 0
 
