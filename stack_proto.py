@@ -48,6 +48,38 @@ def MIDIOFF():
 def noteOff(note):
     controller.note_off(note)
 
+def JMP():
+    if(len(commands.stack) < 1):
+        return
+
+    a = commands.POP()
+    if(type(a) != str):
+        print('non string label')
+        return
+    goto(a)
+
+def JCN():
+    if(len(commands.stack) < 2):
+        return
+
+    label = commands.POP()
+    con = commands.POP()
+    if(type(label) != str):
+        return
+    if(con):
+        goto(label)
+
+
+def goto(a):
+    a = '@' + a[1:]
+    global linenum
+    for line in range(len(prog)):
+        for comm in prog[line]:
+            if(comm == a):
+                linenum = line
+                return
+    print('no such label')
+
 def midiInit():
     midi.init()
 
@@ -74,7 +106,7 @@ mapping = {"POP": commands.POP, "PUSH": commands.PUSH, "ADD": commands.ADD, "SUB
             "OVR": commands.OVR, "ROT": commands.ROT, "EQU": commands.EQU, "NEQ": commands.NEQ,
             "GTH": commands.GTH, "LTH": commands.LTH, "AND": commands.AND, "ORA": commands.ORA,
             "EOR": commands.EOR, "XOR": commands.XOR, "VEL": commands.VEL, "CHN": commands.CHN,
-            "LEN": commands.LEN}
+            "LEN": commands.LEN, "JMP": JMP, "JCN": JCN}
 
 # given a string, split it at the first space or tab
 def SingleToken(data):
@@ -173,9 +205,14 @@ def Parse():
                 return # short circuit on empty item
             elif(item[0] == '#'):
                 try:
+                    # push number on stack
                     commands.subprog.append(int(item[1:], 16))
                 except:
                     continue
+            elif(item[0] == '@' or item[0] == ';'):
+                #label (just for jumps for now)
+                if(len(item) > 1): # don't want '@' or ';' to be valid
+                    commands.subprog.append(item)
             elif item in mapping:
                 commands.subprog.append(mapping[item])                
             else:
@@ -187,17 +224,26 @@ def Init():
     midiInit()
     graphicsInit()
 
-def ExecuteLine(linenum):
-    global prog
+def ExecuteLine():
+    global prog, linenum
     for command in prog[linenum]:
         if(type(command) is int):
-            commands.PUSH(command)
+            commands.PUSH(command) # push ints
+        elif(type(command) is str):
+            if(command[0] == '@'):
+                continue # skip labels
+            elif(command[0] == ';'):
+                commands.PUSH(command) # push 'rel add' onto stack
+        elif(command == JMP or command == JCN):
+            command() 
+            return # jump ends clock cycle
         else:
-            command()
+            command() # run commands
 
 now = time.time()
+linenum = 0
 def Run():    
-    global prog, now
+    global prog, now, linenum
 
     prog = []
     linenum = 0
@@ -211,7 +257,9 @@ def Run():
             if(len(prog) > 0):
                 now = nownow
                 linenum = (linenum + 1) % len(prog)
-                ExecuteLine(linenum)
+                ExecuteLine()
+            else:
+                linenum = 0
 
 def main():
     try:
@@ -220,3 +268,5 @@ def main():
         pass
     Init()
     Run()
+
+main()
