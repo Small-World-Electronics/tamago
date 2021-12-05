@@ -100,6 +100,8 @@ def graphicsInit():
 def top():
     global linenum
     linenum = 0
+    Parse()
+
 
 def midiClose():
     controller.close()
@@ -181,8 +183,11 @@ def Parse():
     global prog
     prog_data = prog_box.get("1.0",END)
     
+    # replace newlines with spaces
+    prog_data = prog_data.replace('\n', ' ')
+
     # short circuit on empty code
-    lines = prog_data.splitlines()
+    lines = re.split('CLK', prog_data) # split on CLK command
     if(lines == [['']]):
         return
 
@@ -191,7 +196,7 @@ def Parse():
         return
 
     # split into lines then tokenize
-    lines = prog_data.splitlines()
+    lines = re.split('CLK', prog_data) # split on CLK command again
     for i in range(len(lines)):
         lines[i] = re.split('[ |\t]', lines[i])
 
@@ -254,7 +259,6 @@ def Run():
 
     prog = []
     while(True):
-        Parse()
         tk.update_idletasks()
         tk.update()
 
