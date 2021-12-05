@@ -14,7 +14,7 @@ prog = []
 
 filename = 'prog.txt'
 
-delay = .5
+delay = .125 # 16th notes at 120 BPM
 
 def BPM():
     if(len(commands.stack) < 1):
@@ -50,24 +50,26 @@ def noteOff(note):
 
 def JMP():
     if(len(commands.stack) < 1):
-        return
+        return False
 
     a = commands.POP()
     if(type(a) != str):
-        print('non string label')
-        return
-    goto(a)
+        print('non string label', a)
+        return False
+    return goto(a)
 
 def JCN():
     if(len(commands.stack) < 2):
-        return
+        return False
 
     label = commands.POP()
     con = commands.POP()
     if(type(label) != str):
-        return
+        print('label is not a string!', label)
+        return False
     if(con):
-        goto(label)
+        return goto(label)
+    return False
 
 
 def goto(a):
@@ -78,8 +80,9 @@ def goto(a):
             if(comm == a):
                 linenum = line
                 linenum -= 1 # counteract auto increment
-                return
+                return True
     print('no such label')
+    return False
 
 def midiInit():
     midi.init()
@@ -247,8 +250,8 @@ def ExecuteLine():
             elif(command[0] == ';'):
                 commands.PUSH(command) # push 'rel addr' onto stack
         elif(command == JMP or command == JCN):
-            command()
-            return # jump ends clock cycle
+            if command():
+                return # successful jump ends clock cycle
         else:
             command() # run commands
 
