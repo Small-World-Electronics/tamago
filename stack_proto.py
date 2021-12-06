@@ -12,6 +12,9 @@ prog_box = None
 controller = None
 prog = []
 
+linenum = 0
+lineidx = 0
+
 #  midi, osc, etc. device values
 dev_vals = {";len": 0, ";vel": 64, ";chn": 0, ";note": 0}
 
@@ -102,12 +105,13 @@ def JCN():
 
 def goto(a):
     a = "@" + a[1:]
-    global linenum
+    global linenum, lineidx
     for line in range(len(prog)):
-        for comm in prog[line]:
+        for commidx in range(len(prog[line])):
+            comm = prog[line][commidx]
             if comm == a:
                 linenum = line
-                linenum -= 1  # counteract auto increment
+                lineidx = commidx
                 return True
     print("no such label")
     return False
@@ -302,21 +306,26 @@ def Init():
 
 
 def ExecuteLine():
-    global prog, linenum
-    for command in prog[linenum]:
+    global prog, linenum, lineidx
+    thisline = prog[linenum]
+    lineidx = 0
+    while lineidx < len(thisline):
+        command = thisline[lineidx]
         if type(command) is int:
             commands.PUSH(command)  # push ints
         elif type(command) is str:
             if command[0] == "@":
-                continue  # skip labels
+                pass  # skip labels
             elif command[0] == ";":
                 commands.PUSH(command)  # push 'rel addr' onto stack
         elif command == JMP or command == JCN:
-            command()  # this doesn't do anything special...
-            # if command():
-            # return # successful jump ends clock cycle
+            # give him a call!
+            if command():
+                thisline = prog[linenum]
+                continue  # skip the increment
         else:
             command()  # run commands
+        lineidx += 1
 
 
 now = time.time()
