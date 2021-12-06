@@ -1,4 +1,4 @@
-#　スタック　★　スタック　★　スタック　#
+# 　スタック　★　スタック　★　スタック　#
 
 import pygame.midi as midi
 import re
@@ -15,16 +15,17 @@ prog = []
 #  midi, osc, etc. device values
 dev_vals = {";len": 0, ";vel": 64, ";chn": 0, ";note": 0}
 
-filename = 'prog.txt'
+filename = "prog.txt"
 
-delay = .125 # 16th notes at 120 BPM
+delay = 0.125  # 16th notes at 120 BPM
+
 
 def BPM():
-    if(len(commands.stack) < 1):
+    if len(commands.stack) < 1:
         return
     a = commands.POP()
-    if(a == 0):
-        commands.PUSH(a) # divide by short circuit
+    if a == 0:
+        commands.PUSH(a)  # divide by short circuit
         return
     global delay
     delay = 60.0 / a
@@ -34,75 +35,83 @@ def BPM():
 # just midi noteon for now. Eventually I'll support cc, osc, etc.
 # which of these does orca support and how?
 def DEO():
-    if(len(commands.stack) < 2):
+    if len(commands.stack) < 2:
         return
 
     label = commands.POP()
     val = commands.POP()
 
-    if(type(label) != str):
+    if type(label) != str:
         print("label is not string", label)
         return
     if label in dev_vals:
-        dev_vals[label] = val        
-    elif label == ';midi': # simply noteon for now
+        dev_vals[label] = val
+    elif label == ";midi":  # simply noteon for now
         midiOn()
     else:
         print("no such device label", label)
+
 
 def midiOn():
     global delay
 
     print("values", dev_vals)
 
-    controller.note_on(dev_vals[';note'], velocity = dev_vals[';vel'], channel = dev_vals[';chn'])
+    controller.note_on(
+        dev_vals[";note"], velocity=dev_vals[";vel"], channel=dev_vals[";chn"]
+    )
 
     # kill the note after a delay
     # this won't work right if call BPM before the cb triggers
-    timer = Timer(delay * dev_vals[';len'], noteOff, args = [dev_vals[';note']])
+    timer = Timer(delay * dev_vals[";len"], noteOff, args=[dev_vals[";note"]])
     timer.start()
+
 
 def midiOff(a):
     controller.note_off(a)
 
+
 def noteOff(note):
     controller.note_off(note)
 
+
 def JMP():
-    if(len(commands.stack) < 1):
+    if len(commands.stack) < 1:
         return False
 
     a = commands.POP()
-    if(type(a) != str):
-        print('non string label', a)
+    if type(a) != str:
+        print("non string label", a)
         return False
     return goto(a)
 
+
 def JCN():
-    if(len(commands.stack) < 2):
+    if len(commands.stack) < 2:
         return False
 
     label = commands.POP()
     con = commands.POP()
-    if(type(label) != str):
-        print('label is not a string!', label)
+    if type(label) != str:
+        print("label is not a string!", label)
         return False
-    if(con):
+    if con:
         return goto(label)
     return False
 
 
 def goto(a):
-    a = '@' + a[1:]
+    a = "@" + a[1:]
     global linenum
     for line in range(len(prog)):
         for comm in prog[line]:
-            if(comm == a):
+            if comm == a:
                 linenum = line
-                linenum -= 1 # counteract auto increment
+                linenum -= 1  # counteract auto increment
                 return True
-    print('no such label')
+    print("no such label")
     return False
+
 
 def midiInit():
     midi.init()
@@ -111,14 +120,16 @@ def midiInit():
     global controller
     controller = midi.Output(3)
 
+
 def graphicsInit():
     global tk, prog_box, text_box
     tk = Tk()
-    tk.geometry('700x700')
-    prog_box = Text(tk,height=20,width=100)
+    tk.geometry("700x700")
+    prog_box = Text(tk, height=20, width=100)
     prog_box.pack(expand=True)
     butt = Button(tk, text="Run", command=top)
     butt.pack()
+
 
 def top():
     global linenum
@@ -130,172 +141,208 @@ def midiClose():
     controller.close()
     midi.quit()
 
-mapping = {"POP": commands.POP, "PUSH": commands.PUSH, "ADD": commands.ADD, "SUB": commands.SUB,
-            "MUL": commands.MUL, "DIV": commands.DIV, "SHL": commands.SHL, "SHR": commands.SHR,
-            "MOD": commands.MOD, "PRINT": commands.PRINT, "DUP": commands.DUP, "BPM": BPM, 
-            "SWP": commands.SWP, "STA": commands.STA, "DEO": DEO,
-            "LDA": commands.LDA, "INC": commands.INC, "DEC": commands.DEC, "NIP": commands.NIP,
-            "OVR": commands.OVR, "ROT": commands.ROT, "EQU": commands.EQU, "NEQ": commands.NEQ,
-            "GTH": commands.GTH, "LTH": commands.LTH, "AND": commands.AND, "ORA": commands.ORA,
-            "EOR": commands.EOR, "XOR": commands.XOR, "JMP": JMP, "JCN": JCN}
+
+mapping = {
+    "POP": commands.POP,
+    "PUSH": commands.PUSH,
+    "ADD": commands.ADD,
+    "SUB": commands.SUB,
+    "MUL": commands.MUL,
+    "DIV": commands.DIV,
+    "SHL": commands.SHL,
+    "SHR": commands.SHR,
+    "MOD": commands.MOD,
+    "PRINT": commands.PRINT,
+    "DUP": commands.DUP,
+    "BPM": BPM,
+    "SWP": commands.SWP,
+    "STA": commands.STA,
+    "DEO": DEO,
+    "LDA": commands.LDA,
+    "INC": commands.INC,
+    "DEC": commands.DEC,
+    "NIP": commands.NIP,
+    "OVR": commands.OVR,
+    "ROT": commands.ROT,
+    "EQU": commands.EQU,
+    "NEQ": commands.NEQ,
+    "GTH": commands.GTH,
+    "LTH": commands.LTH,
+    "AND": commands.AND,
+    "ORA": commands.ORA,
+    "EOR": commands.EOR,
+    "XOR": commands.XOR,
+    "JMP": JMP,
+    "JCN": JCN,
+}
 
 # given a string, split it at the first space or tab
 def SingleToken(data):
-    data = re.split('[ |\t|\n]', data)
-    if(len(data[0]) < 2):
+    data = re.split("[ |\t|\n]", data)
+    if len(data[0]) < 2:
         return -1
     return data[0][1:]
+
 
 # get the code that goes with that macro name
 # this still misses some kinds of errors for sure but it's pretty robust for now
 def GetMacro(prog, macro_name):
-    match = re.search(r"\%"+macro_name+'[ |\t]', prog)
-    if(match == None):
+    match = re.search(r"\%" + macro_name + "[ |\t]", prog)
+    if match == None:
         return -1
-    prog = prog[match.start(0):] # start prog from macro label
-    prog = prog[len(macro_name) + 1:] # cut out macro name
+    prog = prog[match.start(0) :]  # start prog from macro label
+    prog = prog[len(macro_name) + 1 :]  # cut out macro name
 
-    split = re.split('\{[ |\t]', prog)# split out opening brace
-    if(len(split) < 2):
-        return -1 # short circuit no opening brace
+    split = re.split("\{[ |\t]", prog)  # split out opening brace
+    if len(split) < 2:
+        return -1  # short circuit no opening brace
     prog = split[1]
 
-    split = re.split('[ |\t]\}', prog) # split out closing brace
-    if(len(split) < 2):
+    split = re.split("[ |\t]\}", prog)  # split out closing brace
+    if len(split) < 2:
         return -1
     prog = split[0]
 
-    return ' ' + prog + ' '
+    return " " + prog + " "
+
 
 # fill in the given maco label with the macro code
 def MacroFill(program, macro_name, macro_code):
-    return program.replace('!' + macro_name, macro_code)
+    return program.replace("!" + macro_name, macro_code)
+
 
 # find and destroy all macros recursively
 def Macros(prog_data):
-    fill_loc = prog_data.find('!')
-    while(fill_loc != -1):
+    fill_loc = prog_data.find("!")
+    while fill_loc != -1:
         macro_name = SingleToken(prog_data[fill_loc:])
-        if(macro_name == -1):
+        if macro_name == -1:
             return -1
 
         macro_code = GetMacro(prog_data, macro_name)
-        if(macro_code == -1):
+        if macro_code == -1:
             return -1
 
         prog_data = MacroFill(prog_data, macro_name, macro_code)
-        if(prog_data == -1):
+        if prog_data == -1:
             return -1
 
-        fill_loc = prog_data.find('!')
+        fill_loc = prog_data.find("!")
 
     # destroy the macros
     # this isn't done correctly but good enough for now!
-    mac_loc = prog_data.find('%')
-    end_loc = prog_data.find('}')
-    while(mac_loc != -1):
-        if(end_loc == -1):
-            return -1 # no end to macro
-        prog_data = prog_data[:mac_loc] + prog_data[end_loc + 1:]
-        mac_loc = prog_data.find('%')
-        end_loc = prog_data.find('}')
+    mac_loc = prog_data.find("%")
+    end_loc = prog_data.find("}")
+    while mac_loc != -1:
+        if end_loc == -1:
+            return -1  # no end to macro
+        prog_data = prog_data[:mac_loc] + prog_data[end_loc + 1 :]
+        mac_loc = prog_data.find("%")
+        end_loc = prog_data.find("}")
     return prog_data
+
 
 def Parse():
     global prog
-    prog_data = prog_box.get("1.0",END)
-    
+    prog_data = prog_box.get("1.0", END)
+
     # replace newlines with spaces
-    prog_data = prog_data.replace('\n', ' ')
+    prog_data = prog_data.replace("\n", " ")
 
     # short circuit on empty code
-    lines = re.split('CLK', prog_data) # split on CLK command
-    if(lines == [['']]):
+    lines = re.split("CLK", prog_data)  # split on CLK command
+    if lines == [[""]]:
         return
 
     prog_data = Macros(prog_data)
-    if(prog_data == -1):
+    if prog_data == -1:
         return
 
     # split into lines then tokenize
-    lines = re.split('CLK', prog_data) # split on CLK command again
+    lines = re.split("CLK", prog_data)  # split on CLK command again
     for i in range(len(lines)):
-        lines[i] = re.split('[ |\t]', lines[i])
+        lines[i] = re.split("[ |\t]", lines[i])
 
     temp_prog = []
 
     # strip out empty lines
-    lines[:] = [x for x in lines if x != ['']]
+    lines[:] = [x for x in lines if x != [""]]
 
     # strip out empty commands
-    lines[:] = [[x for x in y if x != ''] for y in lines]
+    lines[:] = [[x for x in y if x != ""] for y in lines]
 
     # match tokens with commands from dict or data
     for i in lines:
         commands.subprog = []
         for j in range(len(i)):
             item = i[j]
-            if(item == ''):
-                return # short circuit on empty item
-            elif(item[0] == '#'):
+            if item == "":
+                return  # short circuit on empty item
+            elif item[0] == "#":
                 try:
                     # push number on stack
                     commands.subprog.append(int(item[1:], 16))
                 except:
                     continue
-            elif(item[0] == '@' or item[0] == ';'):
-                #label (just for jumps for now)
-                if(len(item) > 1): # don't want '@' or ';' to be valid
+            elif item[0] == "@" or item[0] == ";":
+                # label (just for jumps for now)
+                if len(item) > 1:  # don't want '@' or ';' to be valid
                     commands.subprog.append(item)
             elif item in mapping:
-                commands.subprog.append(mapping[item])                
+                commands.subprog.append(mapping[item])
             else:
-                return # short circuit on bad command name
+                return  # short circuit on bad command name
         temp_prog.append(commands.subprog)
     prog = temp_prog.copy()
-    
+
+
 def Init():
     midiInit()
     graphicsInit()
 
+
 def ExecuteLine():
     global prog, linenum
     for command in prog[linenum]:
-        if(type(command) is int):
-            commands.PUSH(command) # push ints
-        elif(type(command) is str):
-            if(command[0] == '@'):
-                continue # skip labels
-            elif(command[0] == ';'):
-                commands.PUSH(command) # push 'rel addr' onto stack
-        elif(command == JMP or command == JCN):
-            command() # this doesn't do anything special...
+        if type(command) is int:
+            commands.PUSH(command)  # push ints
+        elif type(command) is str:
+            if command[0] == "@":
+                continue  # skip labels
+            elif command[0] == ";":
+                commands.PUSH(command)  # push 'rel addr' onto stack
+        elif command == JMP or command == JCN:
+            command()  # this doesn't do anything special...
             # if command():
-                # return # successful jump ends clock cycle
+            # return # successful jump ends clock cycle
         else:
-            command() # run commands
+            command()  # run commands
+
 
 now = time.time()
 linenum = 0
-def Run():    
+
+
+def Run():
     global prog, now, linenum
 
     prog = []
-    while(True):
+    while True:
         tk.update_idletasks()
         tk.update()
 
         nownow = time.time()
-        if(nownow - now >= delay):
-            if(len(prog) > 0):
+        if nownow - now >= delay:
+            if len(prog) > 0:
                 now = nownow
-                if(linenum >= len(prog)):
+                if linenum >= len(prog):
                     linenum = len(prog)
                 else:
                     ExecuteLine()
                     linenum += 1
             else:
                 linenum = 0
+
 
 def main():
     try:
@@ -304,5 +351,6 @@ def main():
         pass
     Init()
     Run()
+
 
 main()
