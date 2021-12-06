@@ -246,18 +246,20 @@ def Macros(prog_data):
         end_loc = prog_data.find("}")
     return prog_data
 
+
 def Comments(prog):
     # prog = re.sub('\( .* \)', '', prog)
     for i in range(len(prog) - 1):
         # search for '( '
-        if prog[i:i + 2] == '( ':
+        if prog[i : i + 2] == "( ":
             # search for ' )'
             for j in range(i, len(prog) - 1):
-                if prog[j:j + 2] == ' )':
-                    prog = prog[0: i] + prog[j+2:]
+                if prog[j : j + 2] == " )":
+                    prog = prog[0:i] + prog[j + 2 :]
                     return Comments(prog)
-            return prog # unclosed comment
+            return prog  # unclosed comment
     return prog
+
 
 def Parse():
     global prog
