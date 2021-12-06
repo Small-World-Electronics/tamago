@@ -31,7 +31,8 @@ def BPM():
         commands.PUSH(a)  # divide by short circuit
         return
     global delay
-    delay = 60.0 / a
+    delay = 60.0 / a  # bpm = seconds / beat
+    delay /= 4  # sixteenth notes
 
 
 # set midi, osc, etc values. send midi, osc messages and so on
