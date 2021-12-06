@@ -1,0 +1,15 @@
+%MIDI { ;note DEO ;vel DEO ;len DEO #00 ;midi DEO }
+
+#00 #00 STA
+#200 BPM
+
+@loop
+#03 #70
+#00 LDA #50 ADD
+!MIDI CLK
+
+#00 LDA INC
+#0d MOD
+#00 STA
+
+;loop JMP
