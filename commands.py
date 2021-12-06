@@ -1,10 +1,6 @@
 stack = []
 memory = [0 for i in range(256)]
 
-midi_len = 0
-midi_vel = 64
-midi_chn = 0
-
 def POP():
     if(stack == []):
         return # short circuit if stack is empty
@@ -206,29 +202,3 @@ def EOR():
 # I like this name better. Probably confusing to have two...
 def XOR():
     EOR()
-
-# sets note length in beats 
-def LEN():
-    if(len(stack) < 1):
-        return
-    a = POP()
-    global midi_len
-    midi_len = a
-
-def VEL():
-    if(len(stack) < 1):
-        return
-    a = POP()
-    a = 127 if a > 127 else a
-
-    global midi_vel
-    midi_vel = a
-
-def CHN():
-    if(len(stack) < 1):
-        return
-    a = POP()
-    a = 127 if a > 127 else a
-
-    global midi_chn
-    midi_chn = a

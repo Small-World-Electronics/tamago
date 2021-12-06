@@ -12,6 +12,9 @@ prog_box = None
 controller = None
 prog = []
 
+#  midi, osc, etc. device values
+dev_vals = {";len": 0, ";vel": 64, ";chn": 0, ";note": 0}
+
 filename = 'prog.txt'
 
 delay = .125 # 16th notes at 120 BPM
@@ -26,23 +29,40 @@ def BPM():
     global delay
     delay = 60.0 / a
 
-def MIDION():
-    global delay, midi_len
-    if(len(commands.stack) < 1):
-        return
-    a = commands.POP()
 
-    controller.note_on(a, velocity = commands.midi_vel, channel = commands.midi_chn)
+# set midi, osc, etc values. send midi, osc messages and so on
+# just midi noteon for now. Eventually I'll support cc, osc, etc.
+# which of these does orca support and how?
+def DEO():
+    if(len(commands.stack) < 2):
+        return
+
+    label = commands.POP()
+    val = commands.POP()
+
+    if(type(label) != str):
+        print("label is not string", label)
+        return
+    if label in dev_vals:
+        dev_vals[label] = val        
+    elif label == ';midi': # simply noteon for now
+        midiOn()
+    else:
+        print("no such device label", label)
+
+def midiOn():
+    global delay
+
+    print("values", dev_vals)
+
+    controller.note_on(dev_vals[';note'], velocity = dev_vals[';vel'], channel = dev_vals[';chn'])
 
     # kill the note after a delay
     # this won't work right if call BPM before the cb triggers
-    timer = Timer(delay * commands.midi_len, noteOff, args = [a])
+    timer = Timer(delay * dev_vals[';len'], noteOff, args = [dev_vals[';note']])
     timer.start()
 
-def MIDIOFF():
-    if(len(commands.stack) < 1):
-        return
-    a = commands.POP()
+def midiOff(a):
     controller.note_off(a)
 
 def noteOff(note):
@@ -112,13 +132,12 @@ def midiClose():
 
 mapping = {"POP": commands.POP, "PUSH": commands.PUSH, "ADD": commands.ADD, "SUB": commands.SUB,
             "MUL": commands.MUL, "DIV": commands.DIV, "SHL": commands.SHL, "SHR": commands.SHR,
-            "MOD": commands.MOD, "PRINT": commands.PRINT, "DUP": commands.DUP, "MIDION": MIDION,
-            "MIDIOFF": MIDIOFF, "BPM": BPM, "SWP": commands.SWP, "STA": commands.STA,
+            "MOD": commands.MOD, "PRINT": commands.PRINT, "DUP": commands.DUP, "BPM": BPM, 
+            "SWP": commands.SWP, "STA": commands.STA, "DEO": DEO,
             "LDA": commands.LDA, "INC": commands.INC, "DEC": commands.DEC, "NIP": commands.NIP,
             "OVR": commands.OVR, "ROT": commands.ROT, "EQU": commands.EQU, "NEQ": commands.NEQ,
             "GTH": commands.GTH, "LTH": commands.LTH, "AND": commands.AND, "ORA": commands.ORA,
-            "EOR": commands.EOR, "XOR": commands.XOR, "VEL": commands.VEL, "CHN": commands.CHN,
-            "LEN": commands.LEN, "JMP": JMP, "JCN": JCN}
+            "EOR": commands.EOR, "XOR": commands.XOR, "JMP": JMP, "JCN": JCN}
 
 # given a string, split it at the first space or tab
 def SingleToken(data):
@@ -250,8 +269,9 @@ def ExecuteLine():
             elif(command[0] == ';'):
                 commands.PUSH(command) # push 'rel addr' onto stack
         elif(command == JMP or command == JCN):
-            if command():
-                return # successful jump ends clock cycle
+            command() # this doesn't do anything special...
+            # if command():
+                # return # successful jump ends clock cycle
         else:
             command() # run commands
 
