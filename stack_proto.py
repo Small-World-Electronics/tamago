@@ -10,7 +10,11 @@ from threading import Timer
 tk = None
 prog_box = None
 controller = None
+midi_in = None
 prog = []
+
+clkin = None
+numrtc = 0
 
 linenum = 0
 lineidx = 0
@@ -58,8 +62,6 @@ def DEO():
 
 def midiOn():
     global delay
-
-    print("values", dev_vals)
 
     controller.note_on(
         dev_vals[";note"], velocity=dev_vals[";vel"], channel=dev_vals[";chn"]
@@ -125,16 +127,30 @@ def midiInit():
     global controller
     controller = midi.Output(3)
 
+    # hardcoded loopmidi in
+    global midi_in
+    midi_in = midi.Input(1)
+
+# called when you toggle the clock button
+def ClkOn():
+    global numrtc
+    numrtc = 0
 
 def graphicsInit():
-    global tk, prog_box, text_box
+    global tk, prog_box, clkin, check
+
     tk = Tk()
     tk.geometry("700x700")
+
     prog_box = Text(tk, height=20, width=100)
     prog_box.pack(expand=True)
+
     butt = Button(tk, text="Run", command=top)
     butt.pack()
 
+    clkin = BooleanVar()
+    check = Checkbutton(tk, text="Clk In", variable = clkin,  onvalue=True, offvalue=False, command=ClkOn)
+    check.pack()
 
 def top():
     global linenum
@@ -144,6 +160,7 @@ def top():
 
 def midiClose():
     controller.close()
+    midi_in.close()
     midi.quit()
 
 
@@ -274,9 +291,7 @@ def Parse():
         return
 
     prog_data = Macros(prog_data)  # do macro stuff
-    print(prog_data)
     prog_data = Comments(prog_data)  # do comment stuff
-    print(prog_data)
     if prog_data == -1:
         return
 
@@ -349,6 +364,31 @@ def ExecuteLine():
 now = time.time()
 linenum = 0
 
+def ClockCheck():
+    global now, midi_in, delay, numrtc
+
+    # midi clock in
+    if(clkin.get()):
+        msg = midi_in.read(1)
+        while(msg):
+            msg = msg[0]
+
+            # timing clock, 24 ticks per quarter note
+            if(msg[0][0] == 248):
+                numrtc = (numrtc + 1 ) % 6
+                if(numrtc == 0):
+                    return True
+            msg = midi_in.read(1)
+        return False
+    
+    # local clock
+    nownow = time.time()
+    if nownow - now >= delay:
+        now = nownow 
+        return True
+
+    return False
+
 
 def Run():
     global prog, now, linenum
@@ -358,10 +398,8 @@ def Run():
         tk.update_idletasks()
         tk.update()
 
-        nownow = time.time()
-        if nownow - now >= delay:
+        if(ClockCheck()):
             if len(prog) > 0:
-                now = nownow
                 if linenum >= len(prog):
                     linenum = len(prog)
                 else:
