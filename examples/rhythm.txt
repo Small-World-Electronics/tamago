@@ -1,0 +1,28 @@
+( default midi stuff )
+#70 ;vel DEO
+#00 ;chn DEO
+#01 ;len DEO
+
+( note in the note place )
+#00 #00 STA
+
+( counter in the counter place )
+#00 #01 STA
+
+@loop1
+CLK 
+
+#00 LDA ( load note )
+INC #09 MOD DUP #00 STA ( inc and store )
+
+#03 MUL #39 ADD ( mul and offset )
+;note DEO ( set note )
+
+#01 LDA
+INC #07 MOD DUP #01 STA
+
+#02 MOD ;loop1 JCN
+
+#00 ;midi DEO ( note on )
+
+;loop1 JMP

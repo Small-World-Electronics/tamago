@@ -1,0 +1,8 @@
+#50 ;note DEO
+
+@loop
+CLK
+
+#00 ;midi DEO
+
+;loop JMP
