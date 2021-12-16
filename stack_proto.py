@@ -13,6 +13,8 @@ controller = None
 midi_in = None
 prog = []
 
+running = False
+
 clkin = None
 numrtc = 0
 
@@ -145,18 +147,25 @@ def graphicsInit():
     prog_box = Text(tk, height=20, width=100)
     prog_box.pack(expand=True)
 
-    butt = Button(tk, text="Run", command=top)
+    butt = Button(tk, text="Run", command=start)
     butt.pack()
+
+    stopbutt = Button(tk, text="Stop", command=stop)
+    stopbutt.pack()
 
     clkin = BooleanVar()
     check = Checkbutton(tk, text="Clk In", variable = clkin,  onvalue=True, offvalue=False, command=ClkOn)
     check.pack()
 
-def top():
-    global linenum
+def start():
+    global running, linenum
     linenum = 0
+    running = True
     Parse()
 
+def stop():
+    global running
+    running = False
 
 def midiClose():
     controller.close()
@@ -375,9 +384,10 @@ def ClockCheck():
 
             # timing clock, 24 ticks per quarter note
             if(msg[0][0] == 248):
-                numrtc = (numrtc + 1 ) % 6
                 if(numrtc == 0):
+                    numrtc = (numrtc + 1) % 6
                     return True
+                numrtc = (numrtc + 1) % 6
             msg = midi_in.read(1)
         return False
     
@@ -391,12 +401,15 @@ def ClockCheck():
 
 
 def Run():
-    global prog, now, linenum
+    global prog, now, linenum, running
 
     prog = []
     while True:
         tk.update_idletasks()
         tk.update()
+
+        if not running:
+            continue
 
         if(ClockCheck()):
             if len(prog) > 0:
