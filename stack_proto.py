@@ -390,8 +390,12 @@ def ClockCheck():
         while msg:
             msg = msg[0]
 
+            # start or continue
+            if msg[0][0] == 250 or msg[0][0] == 251:
+                numrtc = 0
+
             # timing clock, 24 ticks per quarter note
-            if msg[0][0] == 248:
+            elif msg[0][0] == 248:
                 if numrtc == 0:
                     numrtc = (numrtc + 1) % 6
                     return True
