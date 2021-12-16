@@ -133,10 +133,12 @@ def midiInit():
     global midi_in
     midi_in = midi.Input(1)
 
+
 # called when you toggle the clock button
 def ClkOn():
     global numrtc
     numrtc = 0
+
 
 def graphicsInit():
     global tk, prog_box, clkin, check
@@ -154,8 +156,11 @@ def graphicsInit():
     stopbutt.pack()
 
     clkin = BooleanVar()
-    check = Checkbutton(tk, text="Clk In", variable = clkin,  onvalue=True, offvalue=False, command=ClkOn)
+    check = Checkbutton(
+        tk, text="Clk In", variable=clkin, onvalue=True, offvalue=False, command=ClkOn
+    )
     check.pack()
+
 
 def start():
     global running, linenum
@@ -163,9 +168,11 @@ def start():
     running = True
     Parse()
 
+
 def stop():
     global running
     running = False
+
 
 def midiClose():
     controller.close()
@@ -373,28 +380,29 @@ def ExecuteLine():
 now = time.time()
 linenum = 0
 
+
 def ClockCheck():
     global now, midi_in, delay, numrtc
 
     # midi clock in
-    if(clkin.get()):
+    if clkin.get():
         msg = midi_in.read(1)
-        while(msg):
+        while msg:
             msg = msg[0]
 
             # timing clock, 24 ticks per quarter note
-            if(msg[0][0] == 248):
-                if(numrtc == 0):
+            if msg[0][0] == 248:
+                if numrtc == 0:
                     numrtc = (numrtc + 1) % 6
                     return True
                 numrtc = (numrtc + 1) % 6
             msg = midi_in.read(1)
         return False
-    
+
     # local clock
     nownow = time.time()
     if nownow - now >= delay:
-        now = nownow 
+        now = nownow
         return True
 
     return False
@@ -411,7 +419,7 @@ def Run():
         if not running:
             continue
 
-        if(ClockCheck()):
+        if ClockCheck():
             if len(prog) > 0:
                 if linenum >= len(prog):
                     linenum = len(prog)
