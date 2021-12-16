@@ -3,8 +3,8 @@
 #00 #00 STA
 
 @loop
-#03 #70
-#00 LDA #50 ADD
+#03 #70 ( len, vel )
+#00 LDA #50 ADD ( note )
 !MIDI CLK
 
 #00 LDA INC
