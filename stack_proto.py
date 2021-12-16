@@ -307,7 +307,12 @@ def Parse():
         return
 
     prog_data = Macros(prog_data)  # do macro stuff
+
+    if(prog_data == -1):
+        return 
+
     prog_data = Comments(prog_data)  # do comment stuff
+
     if prog_data == -1:
         return
 
