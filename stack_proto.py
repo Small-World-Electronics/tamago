@@ -10,9 +10,16 @@ from threading import Timer
 tk = None
 prog_box = None
 stack_box = None
-controller = None
+midi_out = None
 midi_in = None
 prog = []
+
+midi_in_list = []
+midi_in_names = []
+midi_out_list = []
+midi_out_names = []
+mi_var = None
+mo_var = None
 
 running = False
 
@@ -70,7 +77,7 @@ def DEO():
 def midiOn():
     global delay
 
-    controller.note_on(
+    midi_out.note_on(
         dev_vals[";note"], velocity=dev_vals[";vel"], channel=dev_vals[";chn"]
     )
 
@@ -81,11 +88,11 @@ def midiOn():
 
 
 def midiOff(a):
-    controller.note_off(a)
+    midi_out.note_off(a)
 
 
 def noteOff(note):
-    controller.note_off(note)
+    midi_out.note_off(note)
 
 
 def JMP():
@@ -130,14 +137,6 @@ def goto(a):
 def midiInit():
     midi.init()
 
-    # hardcoded loopmidi port for now
-    global controller
-    controller = midi.Output(3)
-
-    # hardcoded loopmidi in
-    global midi_in
-    midi_in = midi.Input(1)
-
 
 # called when you toggle the clock button
 def ClkOn():
@@ -159,18 +158,106 @@ def graphicsInit():
 
     butt = Button(tk, text="Run", command=start)
     butt.pack(side=BOTTOM, anchor="center")
-    butt.place(relx=0.5, rely=0.95)
+    butt.place(relx=0.1, rely=0.95)
 
     stopbutt = Button(tk, text="Stop", command=stop)
     stopbutt.pack(side=BOTTOM, anchor="center")
-    stopbutt.place(relx=0.4, rely=0.95)
+    stopbutt.place(relx=0.2, rely=0.95)
+
+    # midi
+    global midi_in_names, midi_out_names, mi_var, mo_var
+    UpdateMidiDevices()
+
+    mi_var = StringVar()
+    mi_var.set(midi_in_names[0])
+    mi_var.trace("w", setMidiIn)
+
+    midi_in_drop = OptionMenu(tk, mi_var, *midi_in_names)
+    midi_in_drop.pack(side=BOTTOM)
+    midi_in_drop.place(relx=0.5, rely=0.95)
+
+    mo_var = StringVar()
+    mo_var.set(midi_out_names[0])
+    mo_var.trace("w", setMidiOut)
+
+    midi_out_drop = OptionMenu(tk, mo_var, *midi_out_names)
+    midi_out_drop.pack(side=BOTTOM)
+    midi_out_drop.place(relx=0.7, rely=0.95)
 
     clkin = BooleanVar()
     check = Checkbutton(
         tk, text="Clk In", variable=clkin, onvalue=True, offvalue=False, command=ClkOn
     )
     check.pack(side=BOTTOM)
-    check.place(relx=0.6, rely=0.95)
+    check.place(relx=0.3, rely=0.95)
+
+
+def UpdateMidiDevices():
+    global midi_in_list, midi_out_list
+    global midi_in_names, midi_out_names
+
+    midi_in_list = [('none', -1)]
+    midi_in_names = ['none']
+    midi_out_list = [('none', -1)]
+    midi_out_names = ['none']
+
+    num_devices = midi.get_count()
+    for i in range(num_devices):
+        dev = midi.get_device_info(i)
+        name = str(dev[1])[2:-1]
+
+        # input
+        if dev[2] == 1:
+            midi_in_list.append((name, i))
+            midi_in_names.append(name)
+
+        # output
+        elif dev[3] == 1:
+            midi_out_list.append((name, i))
+            midi_out_names.append(name)
+
+
+def setMidiIn(*args):
+    global mi_var, midi_in_list
+    global midi_in
+
+    name = mi_var.get()
+
+    if name == 'none':
+        if(midi_in != None):
+            midi_in.close()
+        return
+
+    for i in midi_in_list:
+        if i[0] == name:
+            if(midi_in != None):
+                midi_in.close()
+            try:
+                midi_in = midi.Input(i[1])
+            except:
+                pass
+            return
+
+
+def setMidiOut(*args):
+    global mo_var, midi_out_list
+    global midi_out
+
+    name = mo_var.get()
+    if name == 'none':
+        if(midi_out != None):
+            midi_out.close()
+        return
+
+    for i in midi_out_list:
+        if i[0] == name:
+            if(midi_out != None):
+                midi_out.close()
+            try:
+                midi_out = midi.Output(i[1])
+            except:
+                pass
+            return
 
 
 def start():
@@ -186,7 +273,7 @@ def stop():
 
 
 def midiClose():
-    controller.close()
+    midi_out.close()
     midi_in.close()
     midi.quit()
 
