@@ -309,12 +309,16 @@ def UpdateStackBox():
     global stack_box
 
     stack = ""
+    counter = 0
     for item in reversed(commands.stack):
         # ints as hex strings
         if type(item) == int:
             stack += hex(item)[2:] + "\n"
         else:
             stack += item + "\n"
+        counter += 1
+        if counter > 25:
+            break
 
     stack_box.config(text=stack)
 
