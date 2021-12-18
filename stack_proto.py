@@ -9,6 +9,7 @@ from threading import Timer
 
 tk = None
 prog_box = None
+stack_box = None
 controller = None
 midi_in = None
 prog = []
@@ -141,25 +142,28 @@ def ClkOn():
 
 
 def graphicsInit():
-    global tk, prog_box, clkin, check
+    global tk, prog_box, clkin, check, stack_box
 
     tk = Tk()
     tk.geometry("700x700")
 
-    prog_box = Text(tk, height=20, width=100)
-    prog_box.pack(expand=True)
+    stack_box = Label(tk, height=10, width=10, text="test\ntest", font=("Arial", 10))
+    stack_box.pack(expand=False, side=LEFT)
+
+    prog_box = Text(tk, height=10, width=80)
+    prog_box.pack(expand=False, side=RIGHT)
 
     butt = Button(tk, text="Run", command=start)
-    butt.pack()
+    butt.pack(side=BOTTOM, anchor="center")
 
     stopbutt = Button(tk, text="Stop", command=stop)
-    stopbutt.pack()
+    stopbutt.pack(side=BOTTOM, anchor="center")
 
     clkin = BooleanVar()
     check = Checkbutton(
         tk, text="Clk In", variable=clkin, onvalue=True, offvalue=False, command=ClkOn
     )
-    check.pack()
+    check.pack(side=BOTTOM, anchor="center")
 
 
 def start():
@@ -292,6 +296,20 @@ def Comments(prog):
                     return Comments(prog)
             return prog  # unclosed comment
     return prog
+
+
+def UpdateStackBox():
+    global stack_box
+
+    stack = ""
+    for item in reversed(commands.stack):
+        # ints as hex strings
+        if(type(item) == int):
+            stack += hex(item)[2:] + '\n'
+        else:
+            stack += item + '\n'
+
+    stack_box.config(text=stack)
 
 
 def Parse():
@@ -429,6 +447,7 @@ def Run():
             continue
 
         if ClockCheck():
+            UpdateStackBox()
             if len(prog) > 0:
                 if linenum >= len(prog):
                     linenum = len(prog)
