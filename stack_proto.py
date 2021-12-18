@@ -151,23 +151,26 @@ def graphicsInit():
     tk = Tk()
     tk.geometry("700x700")
 
-    stack_box = Label(tk, height=10, width=10, text="test\ntest", font=("Arial", 10))
+    stack_box = Label(tk, height=30, width=10, text="", font=("Arial", 10))
     stack_box.pack(expand=False, side=LEFT)
 
-    prog_box = Text(tk, height=10, width=80)
+    prog_box = Text(tk, height=30, width=80)
     prog_box.pack(expand=False, side=RIGHT)
 
     butt = Button(tk, text="Run", command=start)
     butt.pack(side=BOTTOM, anchor="center")
+    butt.place(relx=0.5, rely=0.95)
 
     stopbutt = Button(tk, text="Stop", command=stop)
     stopbutt.pack(side=BOTTOM, anchor="center")
+    stopbutt.place(relx=0.4, rely=0.95)
 
     clkin = BooleanVar()
     check = Checkbutton(
         tk, text="Clk In", variable=clkin, onvalue=True, offvalue=False, command=ClkOn
     )
-    check.pack(side=BOTTOM, anchor="center")
+    check.pack(side=BOTTOM)
+    check.place(relx=0.6, rely=0.95)
 
 
 def start():
