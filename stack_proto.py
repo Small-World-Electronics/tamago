@@ -30,6 +30,10 @@ filename = "prog.txt"
 delay = 0.125  # 16th notes at 120 BPM
 
 
+def PRINT():
+    UpdateStackBox()
+
+
 def BPM():
     if len(commands.stack) < 1:
         return
@@ -194,7 +198,7 @@ mapping = {
     "SHL": commands.SHL,
     "SHR": commands.SHR,
     "MOD": commands.MOD,
-    "PRINT": commands.PRINT,
+    "PRINT": PRINT,
     "DUP": commands.DUP,
     "BPM": BPM,
     "SWP": commands.SWP,
@@ -304,10 +308,10 @@ def UpdateStackBox():
     stack = ""
     for item in reversed(commands.stack):
         # ints as hex strings
-        if(type(item) == int):
-            stack += hex(item)[2:] + '\n'
+        if type(item) == int:
+            stack += hex(item)[2:] + "\n"
         else:
-            stack += item + '\n'
+            stack += item + "\n"
 
     stack_box.config(text=stack)
 

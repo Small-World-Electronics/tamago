@@ -94,11 +94,6 @@ def DUP():
     PUSH(a)
     PUSH(a)
 
-
-def PRINT():
-    print(stack)
-
-
 def SWP():
     if len(stack) < 2:
         return
