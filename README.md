@@ -61,17 +61,24 @@ VAR1 LDA ( load variable one onto the stack )
 
 #### Missing Commands / things
 
-- The return stack hasn't been implemented (yet). STH therefore is not implemented.
-- SFT (todo)
-- LDZ / STZ, LDR / STR. Addresses aren't really a thing as such, so we just use STA / LDA as described above.
+- The return stack hasn't been implemented (yet). `STH` therefore is not implemented.
+- `SFT` (todo)
+- `LDZ / STZ`, `LDR / STR`. Addresses aren't really a thing as such, so we just use `STA / LDA` as described above.
 - `| . $ , & : ' ~ "` We have no need for these things as of yet.
 - BRK (todo)
 - Short versions of commands. 
 
+#### New Commands!
+
+`CLK`: waits until the next clock pulse.  
+`BPM`: sets the clock speed in beats per minute.  
+`SHL / SHR` as described above  
+`PRINT`: forces the stack display to update. Otherwise this only happens once per clock.  
+
 ## Future Plans
 
-- Add Midi ctrl, noteoff, pitchbend, etc. To DEO
-- Add DEI
+- Add Midi ctrl, noteoff, pitchbend, etc. To `DEO`
+- Add `DEI`
 - Add OSC compatability
 - Add clock out
 - Improve graphics
@@ -79,3 +86,19 @@ VAR1 LDA ( load variable one onto the stack )
 - Unit testing
 - Implement the return stack
 - File load / write
+- Beginner's guide to my modified uxntal.
+- Make two clicks of stop / run behave how they should. (todo)
+
+## More Important Details
+
+As of the time of writing:
+
+- Your code is only parsed each time you hit Run. Hitting this also sends the program back to the start.  
+- Stop just pauses execution. 
+- Tick the Clock In box to sync the clock to your midi in source.
+- There are midi I/O selection dropdowns at the bottom. These are populated on launch, so any midi devices must be ready to go when you launch the app.
+
+## Further Reading
+
+For now check out this _excellent_ guide to [uxntal on Varvara](https://compudanzas.net/uxn_tutorial_day_6.html).
+Read some example programs in this repo's examples folder.
