@@ -196,10 +196,10 @@ def UpdateMidiDevices():
     global midi_in_list, midi_out_list
     global midi_in_names, midi_out_names
 
-    midi_in_list = [('none', -1)]
-    midi_in_names = ['none']
-    midi_out_list = [('none', -1)]
-    midi_out_names = ['none']
+    midi_in_list = [("none", -1)]
+    midi_in_names = ["none"]
+    midi_out_list = [("none", -1)]
+    midi_out_names = ["none"]
 
     num_devices = midi.get_count()
     for i in range(num_devices):
@@ -223,14 +223,14 @@ def setMidiIn(*args):
 
     name = mi_var.get()
 
-    if name == 'none':
-        if(midi_in != None):
+    if name == "none":
+        if midi_in != None:
             midi_in.close()
         return
 
     for i in midi_in_list:
         if i[0] == name:
-            if(midi_in != None):
+            if midi_in != None:
                 midi_in.close()
             try:
                 midi_in = midi.Input(i[1])
@@ -244,14 +244,14 @@ def setMidiOut(*args):
     global midi_out
 
     name = mo_var.get()
-    if name == 'none':
-        if(midi_out != None):
+    if name == "none":
+        if midi_out != None:
             midi_out.close()
         return
 
     for i in midi_out_list:
         if i[0] == name:
-            if(midi_out != None):
+            if midi_out != None:
                 midi_out.close()
             try:
                 midi_out = midi.Output(i[1])
@@ -312,14 +312,6 @@ mapping = {
     "JCN": JCN,
 }
 
-# given a string, split it at the first space or tab
-def SingleToken(data):
-    data = re.split("[ |\t|\n]", data)
-    if len(data[0]) < 2:
-        return -1
-    return data[0][1:]
-
-
 # get the code that goes with that macro name
 # this still misses some kinds of errors for sure but it's pretty robust for now
 def GetMacro(prog, macro_name):
@@ -342,29 +334,40 @@ def GetMacro(prog, macro_name):
     return " " + prog + " "
 
 
-# fill in the given maco label with the macro code
-def MacroFill(program, macro_name, macro_code):
-    return program.replace("!" + macro_name, macro_code)
+# valid commands e.g. PRINT
+def ValidCommand(token):
+    if len(token) == 0:
+        return True
+
+    global mapping
+    return token in mapping
 
 
-# find and destroy all macros recursively
-def Macros(prog_data):
-    fill_loc = prog_data.find("!")
-    while fill_loc != -1:
-        macro_name = SingleToken(prog_data[fill_loc:])
-        if macro_name == -1:
-            return -1
+# valid non-command code e.g. { or #31
+def ValidNonCommand(token):
+    if len(token) == 0:
+        return True
 
-        macro_code = GetMacro(prog_data, macro_name)
-        if macro_code == -1:
-            return -1
+    ret = False
 
-        prog_data = MacroFill(prog_data, macro_name, macro_code)
-        if prog_data == -1:
-            return -1
+    ret |= (token == "{") or (token == "}")  # macro braces
+    ret |= token[0] == "#"  # this should check for all ints after the #...
+    ret |= (token[0] == ";") or (token[0] == "@")  # tokens / "addresses" for JMP
+    ret |= token[0] == "%"  # macros
+    ret |= token == "CLK"  # CLK commands (technically not a command)
 
-        fill_loc = prog_data.find("!")
+    return ret
 
+
+def AllValidCode(prog_data):
+    tokenized = re.split("[ |\t]", prog_data)
+    for token in tokenized:
+        if not (ValidCommand(token) or ValidNonCommand(token)):
+            return False
+    return True
+
+
+def DestroyMacros(prog_data):
     # destroy the macros
     # this isn't done correctly but good enough for now!
     mac_loc = prog_data.find("%")
@@ -376,6 +379,26 @@ def Macros(prog_data):
         mac_loc = prog_data.find("%")
         end_loc = prog_data.find("}")
     return prog_data
+
+
+# find and destroy all macros recursively
+def Macros(prog_data):
+    if AllValidCode(prog_data):
+        return DestroyMacros(prog_data)
+
+    ret = ""
+    tokenized = re.split("[ |\t]", prog_data)
+    for token in tokenized:
+        if ValidCommand(token) or ValidNonCommand(token):
+            ret += token + " "
+        else:
+            macro_code = GetMacro(prog_data, token)
+            if macro_code == -1:
+                return -1
+            else:
+                ret += macro_code
+
+    return Macros(ret)
 
 
 def Comments(prog):
@@ -422,12 +445,12 @@ def Parse():
     if lines == [[""]]:
         return
 
-    prog_data = Macros(prog_data)  # do macro stuff
+    prog_data = Comments(prog_data)  # do comment stuff
 
     if prog_data == -1:
         return
 
-    prog_data = Comments(prog_data)  # do comment stuff
+    prog_data = Macros(prog_data)  # do macro stuff
 
     if prog_data == -1:
         return
