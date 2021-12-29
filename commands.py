@@ -53,22 +53,26 @@ def DIV():
     PUSH(a // b)
 
 
-def SHL():
+def SFT():
     if len(stack) < 2:
         return
-    b = POP()
-    a = POP()
-    a = a << b
-    PUSH(a)
 
+    sft = POP()
+    val = POP()
 
-def SHR():
-    if len(stack) < 2:
-        return
-    b = POP()
-    a = POP()
-    a = a >> b
-    PUSH(a)
+    print("sv", sft, val)
+
+    left = (sft & 0xF0) >> 4
+    right = sft & 0x0F
+
+    print("lr", left, right)
+
+    val = val >> right
+    val = val << left
+
+    print("v", val)
+
+    PUSH(val)
 
 
 def MOD():
@@ -93,6 +97,7 @@ def DUP():
     a = POP()
     PUSH(a)
     PUSH(a)
+
 
 def SWP():
     if len(stack) < 2:
