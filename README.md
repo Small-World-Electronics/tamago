@@ -8,10 +8,6 @@ The language is a modified version of the [uxntal](https://wiki.xxiivv.com/site/
 
 If you're familiar with uxntal, here's a list of the things that work differently.
 
-#### Bitshifting
-
-I've replaced the single bitshift command with a `SHR` and `SHL` command. These work how you might expect. I find this a bit easier to work with, and think it will be a bit more beginner friendly. Perhaps the original command can be added as well just to have additional options.
-
 #### Push
 
 There is no `LIT` command. If you want to push a number on the stack, use the `#` syntactic sugar. 
@@ -62,7 +58,6 @@ VAR1 LDA ( load variable one onto the stack )
 #### Missing Commands / things
 
 - The return stack hasn't been implemented (yet). `STH` therefore is not implemented.
-- `SFT` (todo)
 - `LDZ / STZ`, `LDR / STR`. Addresses aren't really a thing as such, so we just use `STA / LDA` as described above.
 - `| . $ , & : ' ~ "` We have no need for these things as of yet.
 - BRK (todo)
@@ -72,7 +67,6 @@ VAR1 LDA ( load variable one onto the stack )
 
 `CLK`: waits until the next clock pulse.  
 `BPM`: sets the clock speed in beats per minute.  
-`SHL / SHR` as described above  
 `PRINT`: forces the stack display to update. Otherwise this only happens once per clock.  
 
 ## Future Plans
@@ -95,6 +89,8 @@ As of the time of writing:
 
 - Your code is only parsed each time you hit Run. Hitting this also sends the program back to the start.  
 - If your code contains any errors the parsing will halt and the old code will run. This doesn't throw any errors at the moment. ( todo )
+- Any time a command cannot be run the error is simply caught and ignored.  
+  - A program like `#00 SUB will just push 0 on the stack, then halt with 0 still on the stack ( after failing to do the subtraction )
 - Stop just pauses execution. 
 - Tick the Clock In box to sync the clock to your midi in source.
 - There are midi I/O selection dropdowns at the bottom. These are populated on launch, so any midi devices must be ready to go when you launch the app.
