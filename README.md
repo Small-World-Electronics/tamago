@@ -94,6 +94,7 @@ VAR1 LDA ( load variable one onto the stack )
 As of the time of writing:
 
 - Your code is only parsed each time you hit Run. Hitting this also sends the program back to the start.  
+- If your code contains any errors the parsing will halt and the old code will run. This doesn't throw any errors at the moment. ( todo )
 - Stop just pauses execution. 
 - Tick the Clock In box to sync the clock to your midi in source.
 - There are midi I/O selection dropdowns at the bottom. These are populated on launch, so any midi devices must be ready to go when you launch the app.
