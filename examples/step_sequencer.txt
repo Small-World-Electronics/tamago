@@ -1,0 +1,17 @@
+#50 #00 STA ( store step 1 note )
+#54 #01 STA ( store step 2 note )
+#4d #02 STA ( store step 3 note )
+#4f #03 STA ( store step 4 note )
+#52 #04 STA ( store step 5 note )
+
+#00 ( counter on stack top )
+
+@loop
+
+INC #05 MOD ( increment and mod counter )
+DUP LDA ( duplicate the counter and grab the next note )
+;note DEO ( set the note )
+#00 ;midi DEO ( send note on message )
+
+CLK ( wait until next clock )
+;loop JMP ( jump back to loop point )
