@@ -30,7 +30,7 @@ linenum = 0
 lineidx = 0
 
 #  midi, osc, etc. device values
-dev_vals = {";len": 0, ";vel": 64, ";chn": 0, ";note": 0}
+dev_vals = {";len": 1, ";vel": 64, ";chn": 0, ";note": 0}
 
 filename = "prog.txt"
 
