@@ -4,7 +4,7 @@
 
 @loop
 
-!RAND PRINT DUP ( generate next random number )
+RAND PRINT DUP ( generate next random number )
 #0E MOD #50 ADD ( mod and o/s )
 ;note DEO #00 ;midi DEO ( set note and noteon )
 
