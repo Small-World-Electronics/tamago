@@ -2,6 +2,13 @@
 
 Livecoding music sequencer based on [uxn](https://wiki.xxiivv.com/site/uxn.html) and more loosely [Orca](https://github.com/hundredrabbits/Orca), both by the wonderful [Hundred Rabbits](https://github.com/hundredrabbits).
 
+## Running the Program
+
+Using python 3 run `python stack_proto.py`.  
+The one dependency right now is pygame for its midi capablities.  
+You can install that with `pip install pygame`  
+We also depend on tkinter, but I think that comes by default...
+
 ## Language
 
 The language is a modified version of the [uxntal](https://wiki.xxiivv.com/site/uxntal.html) used on the [Varvara Computer](https://wiki.xxiivv.com/site/varvara.html).
