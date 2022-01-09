@@ -104,5 +104,6 @@ As of the time of writing:
 
 ## Further Reading
 
-For now check out this _excellent_ guide to [uxntal on Varvara](https://compudanzas.net/uxn_tutorial_day_6.html).
-Read some example programs in this repo's examples folder.
+- For more language info, see this _excellent_ guide to [uxntal on Varvara](https://compudanzas.net/uxn_tutorial_day_1.html).  
+- Read some example programs in this repo's examples folder. Feel free to submit any you come up with!  
+- Check out the macros.md file for a list of useful macros. Feel free to submit your own!  
