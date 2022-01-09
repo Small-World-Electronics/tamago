@@ -72,8 +72,8 @@ VAR1 LDA ( load variable one onto the stack )
 
 #### New Commands!
 
-`CLK`: waits until the next clock pulse.  
-`BPM`: sets the clock speed in beats per minute.  
+`CLK`: waits until the next clock pulse. Also updates the stack display.   
+`BPM`: sets the quarter note clock speed in beats per minute. The actual ticks will happen 4 times faster (16th note clock)  
 `PRINT`: forces the stack display to update. Otherwise this only happens once per clock.  
 
 ## Future Plans
