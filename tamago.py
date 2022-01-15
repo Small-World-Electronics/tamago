@@ -52,6 +52,10 @@ def BPM():
     delay = 60.0 / a  # bpm = seconds / beat
     delay /= 4  # sixteenth notes
 
+# stop running
+def BRK():
+    stop()
+
 
 # set midi, osc, etc values. send midi, osc messages and so on
 # just midi noteon for now. Eventually I'll support cc, osc, etc.
@@ -309,6 +313,7 @@ mapping = {
     "XOR": commands.XOR,
     "JMP": JMP,
     "JCN": JCN,
+    "BRK": BRK,
 }
 
 # get the code that goes with that macro name
