@@ -1,6 +1,8 @@
-# Stack Proto Alpha
+# tamago
 
 Livecoding music sequencer based on [uxn](https://wiki.xxiivv.com/site/uxn.html) and more loosely [Orca](https://github.com/hundredrabbits/Orca), both by the wonderful [Hundred Rabbits](https://github.com/hundredrabbits).
+
+Check out a [Demo video of a buggy alpha build](https://www.youtube.com/watch?v=dOmFJSYxNow)
 
 ## Running the Program
 
@@ -72,8 +74,8 @@ VAR1 LDA ( load variable one onto the stack )
 
 #### New Commands!
 
-`CLK`: waits until the next clock pulse.  
-`BPM`: sets the clock speed in beats per minute.  
+`CLK`: waits until the next clock pulse. Also updates the stack display.   
+`BPM`: sets the quarter note clock speed in beats per minute. The actual ticks will happen 4 times faster (16th note clock)  
 `PRINT`: forces the stack display to update. Otherwise this only happens once per clock.  
 
 ## Future Plans
@@ -104,5 +106,6 @@ As of the time of writing:
 
 ## Further Reading
 
-For now check out this _excellent_ guide to [uxntal on Varvara](https://compudanzas.net/uxn_tutorial_day_6.html).
-Read some example programs in this repo's examples folder.
+- For more language info, see this _excellent_ guide to [uxntal on Varvara](https://compudanzas.net/uxn_tutorial_day_1.html).  
+- Read some example programs in this repo's examples folder. Feel free to submit any you come up with!  
+- Check out the macros.md file for a list of useful macros. Feel free to submit your own!  
