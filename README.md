@@ -6,7 +6,7 @@ Check out a [Demo video of a buggy alpha build](https://www.youtube.com/watch?v=
 
 ## Running the Program
 
-Using python 3 run `python stack_proto.py`.  
+Using python 3 run `python tamago.py`.  
 The one dependency right now is pygame for its midi capablities.  
 You can install that with `pip install pygame`  
 We also depend on tkinter, but I think that comes by default...
