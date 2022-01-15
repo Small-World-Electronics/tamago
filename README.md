@@ -71,7 +71,6 @@ VAR1 LDA ( load variable one onto the stack )
 - The return stack hasn't been implemented (yet). `STH` therefore is not implemented.
 - `LDZ / STZ`, `LDR / STR`. Addresses aren't really a thing as such, so we just use `STA / LDA` as described above.
 - `| . $ , & : ' ~ "` We have no need for these things as of yet.
-- BRK (todo)
 - Short versions of commands. 
 
 #### New Commands!
