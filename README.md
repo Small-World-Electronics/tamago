@@ -1,5 +1,7 @@
 # tamago
 
+<img src="resources/tamago.png" width="20%"/>
+
 Livecoding music sequencer based on [uxn](https://wiki.xxiivv.com/site/uxn.html) and more loosely [Orca](https://github.com/hundredrabbits/Orca), both by the wonderful [Hundred Rabbits](https://github.com/hundredrabbits).
 
 Check out a [Demo video of a buggy alpha build](https://www.youtube.com/watch?v=dOmFJSYxNow)
