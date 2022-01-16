@@ -542,6 +542,13 @@ now = time.time()
 linenum = 0
 
 
+def EmptyMidiIn():
+    global midi_in
+    if midi_in != None:
+        while midi_in.read(1):
+            pass
+
+
 def ClockCheck():
     global now, midi_in, delay, numrtc
 
@@ -570,6 +577,10 @@ def ClockCheck():
             msg = midi_in.read(1)
         return False
 
+    # dump the midi in queue
+    elif midi_in != None:
+        EmptyMidiIn()
+
     # local clock
     nownow = time.time()
     if nownow - now >= delay:
@@ -588,6 +599,8 @@ def Run():
         tk.update()
 
         if not running:
+            # empty midi in queue
+            EmptyMidiIn()
             continue
 
         if ClockCheck():
