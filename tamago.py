@@ -89,7 +89,11 @@ def midiOn():
 
         # kill the note after a delay
         # this won't work right if call BPM before the cb triggers
-        timer = Timer(delay * dev_vals[";len"], noteOff, args=[dev_vals[";note"]])
+        timer = Timer(
+            delay * dev_vals[";len"],
+            noteOff,
+            args=[dev_vals[";note"], dev_vals[";chn"]],
+        )
         timer.start()
     except:
         pass
@@ -99,8 +103,8 @@ def midiOff(a):
     midi_out.note_off(a)
 
 
-def noteOff(note):
-    midi_out.note_off(note)
+def noteOff(note, channel):
+    midi_out.note_off(note, channel=channel)
 
 
 def JMP():
