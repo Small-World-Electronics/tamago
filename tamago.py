@@ -52,6 +52,7 @@ def BPM():
     delay = 60.0 / a  # bpm = seconds / beat
     delay /= 4  # sixteenth notes
 
+
 # stop running
 def BRK():
     stop()
@@ -229,7 +230,7 @@ def setMidiIn(*args):
     global midi_in
     global midi_out
 
-    name = mi_var.get()    
+    name = mi_var.get()
 
     if name == "none":
         if midi_in != None:
@@ -243,13 +244,14 @@ def setMidiIn(*args):
 
             # restart midi and reopen i/o
             midi.quit()
-            midi.init() 
+            midi.init()
             midi_in = midi.Input(i[1])
 
             if midi_out != None:
                 midi_out = midi.Output(midi_out.device_id)
 
             return
+
 
 def setMidiOut(*args):
     global mo_var, midi_out_list
@@ -269,13 +271,14 @@ def setMidiOut(*args):
 
             # restart midi and reopen i/o
             midi.quit()
-            midi.init() 
+            midi.init()
             midi_out = midi.Output(i[1])
 
             if midi_in != None:
                 midi_in = midi.Input(midi_in.device_id)
 
             return
+
 
 def start():
     global running, linenum
