@@ -1,4 +1,4 @@
-# 　スタック　★　スタック　★　スタック　#
+# 　たまご　★　たまご　★　たまご　#
 
 import pygame.midi as midi
 import re
@@ -81,14 +81,17 @@ def DEO():
 def midiOn():
     global delay
 
-    midi_out.note_on(
-        dev_vals[";note"], velocity=dev_vals[";vel"], channel=dev_vals[";chn"]
-    )
+    try:
+        midi_out.note_on(
+            dev_vals[";note"], velocity=dev_vals[";vel"], channel=dev_vals[";chn"]
+        )
 
-    # kill the note after a delay
-    # this won't work right if call BPM before the cb triggers
-    timer = Timer(delay * dev_vals[";len"], noteOff, args=[dev_vals[";note"]])
-    timer.start()
+        # kill the note after a delay
+        # this won't work right if call BPM before the cb triggers
+        timer = Timer(delay * dev_vals[";len"], noteOff, args=[dev_vals[";note"]])
+        timer.start()
+    except:
+        pass
 
 
 def midiOff(a):
@@ -224,8 +227,9 @@ def UpdateMidiDevices():
 def setMidiIn(*args):
     global mi_var, midi_in_list
     global midi_in
+    global midi_out
 
-    name = mi_var.get()
+    name = mi_var.get()    
 
     if name == "none":
         if midi_in != None:
@@ -236,16 +240,21 @@ def setMidiIn(*args):
         if i[0] == name:
             if midi_in != None:
                 midi_in.close()
-            try:
-                midi_in = midi.Input(i[1])
-            except:
-                pass
-            return
 
+            # restart midi and reopen i/o
+            midi.quit()
+            midi.init() 
+            midi_in = midi.Input(i[1])
+
+            if midi_out != None:
+                midi_out = midi.Output(midi_out.device_id)
+
+            return
 
 def setMidiOut(*args):
     global mo_var, midi_out_list
     global midi_out
+    global midi_in
 
     name = mo_var.get()
     if name == "none":
@@ -257,12 +266,16 @@ def setMidiOut(*args):
         if i[0] == name:
             if midi_out != None:
                 midi_out.close()
-            try:
-                midi_out = midi.Output(i[1])
-            except:
-                pass
-            return
 
+            # restart midi and reopen i/o
+            midi.quit()
+            midi.init() 
+            midi_out = midi.Output(i[1])
+
+            if midi_in != None:
+                midi_in = midi.Input(midi_in.device_id)
+
+            return
 
 def start():
     global running, linenum
@@ -532,8 +545,14 @@ linenum = 0
 def ClockCheck():
     global now, midi_in, delay, numrtc
 
-    # midi clock in
     if clkin.get():
+        if midi_in == None:
+            return False
+        try:
+            midi_in.poll()
+        except:
+            return False
+
         msg = midi_in.read(1)
         while msg:
             msg = msg[0]
