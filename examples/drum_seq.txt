@@ -1,0 +1,38 @@
+%NOTE { #0C MUL ADD } ( convert note, octave to midi note )
+
+%KICK { #ABAD } ( kick rhythm )
+%SNARE { #0908 } ( snare rhythm )
+%HAT { #CA9D } ( hat rhythm )
+
+( load the counter, bitshift the rhythm, get last bit and mul to vel )
+%LDSFT { #00 LDA SFT #01 AND #0f MUL }
+
+( send a note with vel and octave 3 )
+%SENDNOTE { SWP ;vel DEO #03 NOTE ;note DEO #00 ;midi DEO }
+
+#00 #00 STA ( store counter )
+
+( main )
+@loop
+
+( load counter, incerement and mod, store )
+#00 LDA
+INC #10 MOD
+#00 STA
+
+KICK
+LDSFT ( velocity )
+#00  ( note )
+SENDNOTE
+
+SNARE
+LDSFT ( velocity )
+#02 ( note )
+SENDNOTE
+
+HAT
+LDSFT ( velocity )
+#06  ( note )
+SENDNOTE
+
+CLK ;loop JMP
