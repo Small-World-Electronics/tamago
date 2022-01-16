@@ -4,11 +4,12 @@
 
 Livecoding music sequencer based on [uxn](https://wiki.xxiivv.com/site/uxn.html) and more loosely [Orca](https://github.com/hundredrabbits/Orca), both by the wonderful [Hundred Rabbits](https://github.com/hundredrabbits).
 
-Check out a [Demo video of a buggy alpha build](https://www.youtube.com/watch?v=dOmFJSYxNow)
-
 ## Running the Program
 
+First clone the repo with `git clone https://github.com/beserge/tamago`.  
+Next, move into that folder with `cd tamago`.  
 Using python 3 run `python tamago.py`.  
+  
 The one dependency right now is pygame for its midi capablities.  
 You can install that with `pip install pygame`  
 We also depend on tkinter, but I think that comes by default...
