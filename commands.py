@@ -60,17 +60,11 @@ def SFT():
     sft = POP()
     val = POP()
 
-    print("sv", sft, val)
-
     left = (sft & 0xF0) >> 4
     right = sft & 0x0F
 
-    print("lr", left, right)
-
     val = val >> right
     val = val << left
-
-    print("v", val)
 
     PUSH(val)
 
