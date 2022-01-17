@@ -162,7 +162,7 @@ def graphicsInit():
     tk = Tk()
     tk.geometry("700x700")
 
-    photo = PhotoImage(file='resources/resize_tamago.png')
+    photo = PhotoImage(file='resources/tamago_icon.png')
     tk.iconphoto(False, photo)
     tk.title('tamago')
 
