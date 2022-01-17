@@ -154,13 +154,17 @@ def midiInit():
 def ClkOn():
     global numrtc
     numrtc = 0
-
+    
 
 def graphicsInit():
     global tk, prog_box, clkin, check, stack_box
 
     tk = Tk()
     tk.geometry("700x700")
+
+    photo = PhotoImage(file='resources/resize_tamago.png')
+    tk.iconphoto(False, photo)
+    tk.title('tamago')
 
     stack_box = Label(tk, height=30, width=10, text="", font=("Arial", 10))
     stack_box.pack(expand=False, side=LEFT)
