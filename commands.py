@@ -117,6 +117,7 @@ def STA():
     add = POP()
     val = POP()
     if add < 0 or add > 255:
+        print("STA Error: Address out of range")
         return  # only allowing 255 vars for now
     memory[add] = val
 
