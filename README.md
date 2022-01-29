@@ -14,6 +14,13 @@ The one dependency right now is pygame for its midi capablities.
 You can install that with `pip install pygame`  
 We also depend on tkinter, but I think that comes by default...
 
+## Program Layout
+
+- The main area is a large box where you type in your code.  
+- To the left is the stack display, where you can see the top 25 elements on the stack.  
+- Above is the contents of the first 8 variables. There are 256 available, but only the first 8 are displayed.  
+- Below are the main program controls.  
+
 ## Language
 
 The language is a modified version of the [uxntal](https://wiki.xxiivv.com/site/uxntal.html) used on the [Varvara Computer](https://wiki.xxiivv.com/site/varvara.html).
@@ -76,9 +83,10 @@ VAR1 LDA ( load variable one onto the stack )
 
 #### New Commands!
 
-`CLK`: waits until the next clock pulse. Also updates the stack display.   
+`CLK`: waits until the next clock pulse. Also updates the stack and variable displays.   
+`*`: This is syntactic sugar for `CLK`. For example `INC**` == `INC CLK CLK`.  
 `BPM`: sets the quarter note clock speed in beats per minute. The actual ticks will happen 4 times faster (16th note clock)  
-`PRINT`: forces the stack display to update. Otherwise this only happens once per clock.  
+`PRINT`: forces the stack and variable displays to update. Otherwise this only happens once per clock.  
 
 ## Future Plans
 
@@ -99,7 +107,7 @@ VAR1 LDA ( load variable one onto the stack )
 As of the time of writing:
 
 - Your code is only parsed each time you hit Run. Hitting this also sends the program back to the start.  
-- If your code contains any errors the parsing will halt and the old code will run. This doesn't throw any errors at the moment. ( todo )
+- If your code contains any errors the parsing will halt and the old code will run.  
 - Any time a command cannot be run the error is simply caught and ignored.  
   - A program like `#00 SUB will just push 0 on the stack, then halt with 0 still on the stack ( after failing to do the subtraction )
 - Stop just pauses execution. 
