@@ -2,8 +2,15 @@ stack = []
 memory = [0 for i in range(256)]
 
 
+def lencheck(length, funcname):
+    if len(stack) < length:
+        print(funcname + " Error: Too few items on stack")
+        return True
+    return False
+
+
 def POP():
-    if stack == []:
+    if lencheck(1, "POP"):
         return  # short circuit if stack is empty
     a = stack.pop()
     return a
@@ -15,7 +22,7 @@ def PUSH(i):
 
 
 def ADD():
-    if len(stack) < 2:
+    if lencheck(2, "ADD"):
         return
     b = POP()
     a = POP()
@@ -23,7 +30,7 @@ def ADD():
 
 
 def SUB():
-    if len(stack) < 2:
+    if lencheck(2, "SUB"):
         return
     b = POP()
     a = POP()
@@ -31,7 +38,7 @@ def SUB():
 
 
 def MUL():
-    if len(stack) < 2:
+    if lencheck(2, "MUL"):
         return
     b = POP()
     a = POP()
@@ -39,13 +46,14 @@ def MUL():
 
 
 def DIV():
-    if len(stack) < 2:
+    if lencheck(2, "DIV"):
         return
     b = POP()
     a = POP()
 
     # short circuit on divide by 0
     if b == 0:
+        print("DIV Error: Divide by 0")
         PUSH(a)
         PUSH(b)
         return
@@ -54,7 +62,7 @@ def DIV():
 
 
 def SFT():
-    if len(stack) < 2:
+    if lencheck(2, "SFT"):
         return
 
     sft = POP()
@@ -70,13 +78,14 @@ def SFT():
 
 
 def MOD():
-    if len(stack) < 2:
+    if lencheck(2, "MOD"):
         return
     b = POP()
     a = POP()
 
     # short circuit on divide by 0
     if b == 0:
+        print("MOD Error: Divide by 0")
         PUSH(a)
         PUSH(b)
         return
@@ -86,7 +95,7 @@ def MOD():
 
 
 def DUP():
-    if len(stack) < 1:
+    if lencheck(1, "DUP"):
         return
     a = POP()
     PUSH(a)
@@ -94,7 +103,7 @@ def DUP():
 
 
 def SWP():
-    if len(stack) < 2:
+    if lencheck(2, "SWP"):
         return
     a = POP()
     b = POP()
@@ -103,7 +112,7 @@ def SWP():
 
 
 def STA():
-    if len(stack) < 2:
+    if lencheck(2, "STA"):
         return
     add = POP()
     val = POP()
@@ -113,28 +122,28 @@ def STA():
 
 
 def LDA():
-    if len(stack) < 1:
+    if lencheck(1, "LDA"):
         return
     add = POP()
     PUSH(memory[add])
 
 
 def INC():
-    if len(stack) < 1:
+    if lencheck(1, "INC"):
         return
     a = POP() + 1
     PUSH(a)
 
 
 def DEC():
-    if len(stack) < 1:
+    if lencheck(1, "DEC"):
         return
     a = POP() - 1
     PUSH(a)
 
 
 def NIP():
-    if len(stack) < 2:
+    if lencheck(2, "NIP"):
         return
     a = POP()
     POP()
@@ -143,7 +152,7 @@ def NIP():
 
 # a b -- a b a
 def OVR():
-    if len(stack) < 2:
+    if lencheck(2, "OVR"):
         return
     b = POP()
     a = POP()
@@ -154,7 +163,7 @@ def OVR():
 
 # a b c -- b c a
 def ROT():
-    if len(stack) < 3:
+    if lencheck(3, "ROT"):
         return
     c = POP()
     b = POP()
@@ -165,7 +174,7 @@ def ROT():
 
 
 def EQU():
-    if len(stack) < 2:
+    if lencheck(2, "EQU"):
         return
     b = POP()
     a = POP()
@@ -173,7 +182,7 @@ def EQU():
 
 
 def NEQ():
-    if len(stack) < 2:
+    if lencheck(2, "NEQ"):
         return
     b = POP()
     a = POP()
@@ -181,7 +190,7 @@ def NEQ():
 
 
 def GTH():
-    if len(stack) < 2:
+    if lencheck(2, "GTH"):
         return
     b = POP()
     a = POP()
@@ -189,7 +198,7 @@ def GTH():
 
 
 def LTH():
-    if len(stack) < 2:
+    if lencheck(2, "LTH"):
         return
     b = POP()
     a = POP()
@@ -197,7 +206,7 @@ def LTH():
 
 
 def AND():
-    if len(stack) < 2:
+    if lencheck(2, "AND"):
         return
     b = POP()
     a = POP()
@@ -205,7 +214,7 @@ def AND():
 
 
 def ORA():
-    if len(stack) < 2:
+    if lencheck(2, "ORA"):
         return
     b = POP()
     a = POP()
@@ -213,7 +222,7 @@ def ORA():
 
 
 def EOR():
-    if len(stack) < 2:
+    if lencheck(2, "EOR"):
         return
     b = POP()
     a = POP()
