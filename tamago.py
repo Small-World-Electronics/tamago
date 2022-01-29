@@ -10,6 +10,7 @@ from threading import Timer
 tk = None
 prog_box = None
 stack_box = None
+var_box = None
 midi_out = None
 midi_in = None
 prog = []
@@ -39,6 +40,7 @@ delay = 0.125  # 16th notes at 120 BPM
 
 def PRINT():
     UpdateStackBox()
+    UpdateVarBox()
 
 
 def BPM():
@@ -157,55 +159,81 @@ def ClkOn():
     
 
 def graphicsInit():
-    global tk, prog_box, clkin, check, stack_box
+    global tk, prog_box, clkin, check, stack_box, var_box
 
+    ## basic setup
     tk = Tk()
     tk.geometry("700x700")
+    # tk.minsize = (700, 700) this doesn't work...
+    tk.resizable(width=False, height=False) # keep people from breaking the graphics for now
 
     photo = PhotoImage(file='resources/tamago_icon.png')
     tk.iconphoto(False, photo)
     tk.title('tamago')
+    frame_relief = FLAT # set this to RAISED to see the frames
 
-    stack_box = Label(tk, height=30, width=10, text="", font=("Arial", 10))
+    ## text boxes
+    # stack display
+    stack_frame = Frame(tk, relief=frame_relief, borderwidth=1)
+    stack_frame.pack(side=LEFT, fill=NONE, expand=False)
+    stack_box = Label(stack_frame, height=30, width=10, text="", font=("Arial", 10))
     stack_box.pack(expand=False, side=LEFT)
 
-    prog_box = Text(tk, height=30, width=80)
-    prog_box.pack(expand=False, side=RIGHT)
+    # variable display
+    var_frame = Frame(tk, relief=frame_relief, borderwidth=1, height = 60)
+    var_frame.pack(side=TOP, fill=X, expand=False)
+    var_frame.pack_propagate(0) # otherwise it wants to be chonky
+    var_box = Label(var_frame, height=20, width=80, text="", font=("Arial", 10))
+    var_box.pack(expand=False)
+    UpdateVarBox()
 
-    butt = Button(tk, text="Run", command=start)
-    butt.pack(side=BOTTOM, anchor="center")
-    butt.place(relx=0.1, rely=0.95)
-
-    stopbutt = Button(tk, text="Stop", command=stop)
-    stopbutt.pack(side=BOTTOM, anchor="center")
-    stopbutt.place(relx=0.2, rely=0.95)
-
-    # midi
+    #  program box
+    progframe = Frame(tk, relief=frame_relief, borderwidth=1)
+    progframe.pack(fill=BOTH, expand=True)
+    prog_box = Text(progframe, height=30, width=80)
+    prog_box.pack(fill=BOTH, expand=True, side=BOTTOM, padx = 10, pady = 5)
+    
+    ## buttons and midi
     global midi_in_names, midi_out_names, mi_var, mo_var
     UpdateMidiDevices()
 
-    mi_var = StringVar()
-    mi_var.set(midi_in_names[0])
-    mi_var.trace("w", setMidiIn)
+    butt_frame = Frame(tk, relief=frame_relief, borderwidth=1, height=60)
+    butt_frame.pack(fill=X, expand=False, side=BOTTOM)
+    butt_frame.pack_propagate(0) # otherwise it wants to be chonky
 
-    midi_in_drop = OptionMenu(tk, mi_var, *midi_in_names)
-    midi_in_drop.pack(side=BOTTOM)
-    midi_in_drop.place(relx=0.5, rely=0.95)
+    #  push the buttons to the left
+    butt_pad_frame = Frame(butt_frame, relief=frame_relief, borderwidth=1, height=60, width=130 )
+    butt_pad_frame.pack(fill=X, expand=False, side=RIGHT)
+    butt_pad_frame.pack_propagate(0) # otherwise it wants to be chonky
 
+    # midi output dropdown
     mo_var = StringVar()
     mo_var.set(midi_out_names[0])
     mo_var.trace("w", setMidiOut)
+    midi_out_drop = OptionMenu(butt_frame, mo_var, *midi_out_names)
+    midi_out_drop.pack(side=RIGHT, padx = 10, pady = 5)
 
-    midi_out_drop = OptionMenu(tk, mo_var, *midi_out_names)
-    midi_out_drop.pack(side=BOTTOM)
-    midi_out_drop.place(relx=0.7, rely=0.95)
+    # midi input dropdown
+    mi_var = StringVar()
+    mi_var.set(midi_in_names[0])
+    mi_var.trace("w", setMidiIn)
+    midi_in_drop = OptionMenu(butt_frame, mi_var, *midi_in_names)
+    midi_in_drop.pack(side=RIGHT, padx = 10, pady = 5)
 
+    # clk in checkbox
     clkin = BooleanVar()
     check = Checkbutton(
-        tk, text="Clk In", variable=clkin, onvalue=True, offvalue=False, command=ClkOn
+        butt_frame, text="Clk In", variable=clkin, onvalue=True, offvalue=False, command=ClkOn
     )
-    check.pack(side=BOTTOM)
-    check.place(relx=0.3, rely=0.95)
+    check.pack(side=RIGHT, padx = 20, pady = 5)
+
+    # stop button
+    stopbutt = Button(butt_frame, text="Stop", command=stop)
+    stopbutt.pack(side=RIGHT, padx = 5, pady = 5)
+
+    # start button
+    butt = Button(butt_frame, text="Run", command=start)
+    butt.pack(side=RIGHT, padx = 10, pady = 5)
 
 
 def UpdateMidiDevices():
@@ -443,6 +471,20 @@ def Comments(prog):
     return prog
 
 
+def UpdateVarBox():
+    global var_box
+
+    vars = ""
+
+    for i in range(8):
+        vars += str(i)
+        vars += ": "
+        vars += hex(commands.memory[i])
+        vars += "       "
+
+    var_box.config(text=vars)
+
+
 def UpdateStackBox():
     global stack_box
 
@@ -451,7 +493,7 @@ def UpdateStackBox():
     for item in reversed(commands.stack):
         # ints as hex strings
         if type(item) == int:
-            stack += hex(item)[2:] + "\n"
+            stack += hex(item) + "\n"
         else:
             stack += item + "\n"
         counter += 1
@@ -616,6 +658,7 @@ def Run():
 
         if ClockCheck():
             UpdateStackBox()
+            UpdateVarBox()
             if len(prog) > 0:
                 if linenum >= len(prog):
                     linenum = len(prog)
