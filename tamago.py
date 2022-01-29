@@ -479,7 +479,7 @@ def Comments(prog):
                 if prog[j : j + 2] == " )":
                     prog = prog[0:i] + prog[j + 2 :]
                     return Comments(prog)
-            return prog  # unclosed comment
+            return -1  # unclosed comment
     return prog
 
 
