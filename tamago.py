@@ -420,6 +420,7 @@ def ValidNonCommand(token):
     ret |= (token[0] == ";") or (token[0] == "@")  # tokens / "addresses" for JMP
     ret |= token[0] == "%"  # macros
     ret |= token == "CLK"  # CLK commands (technically not a command)
+    ret |= token == "."  # . commands (technically not a command)
 
     return ret
 
@@ -518,6 +519,9 @@ def Parse():
 
     # replace newlines with spaces
     prog_data = prog_data.replace("\n", " ")
+    prog_data = prog_data.replace(".", " CLK ")
+
+    print(prog_data)
 
     # short circuit on empty code
     lines = re.split("CLK", prog_data)  # split on CLK command
