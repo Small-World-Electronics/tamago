@@ -156,7 +156,7 @@ def midiInit():
 def ClkOn():
     global numrtc
     numrtc = 0
-    
+
 
 def graphicsInit():
     global tk, prog_box, clkin, check, stack_box, var_box
@@ -165,12 +165,14 @@ def graphicsInit():
     tk = Tk()
     tk.geometry("700x700")
     # tk.minsize = (700, 700) this doesn't work...
-    tk.resizable(width=False, height=False) # keep people from breaking the graphics for now
+    tk.resizable(
+        width=False, height=False
+    )  # keep people from breaking the graphics for now
 
-    photo = PhotoImage(file='resources/tamago_icon.png')
+    photo = PhotoImage(file="resources/tamago_icon.png")
     tk.iconphoto(False, photo)
-    tk.title('tamago')
-    frame_relief = FLAT # set this to RAISED to see the frames
+    tk.title("tamago")
+    frame_relief = FLAT  # set this to RAISED to see the frames
 
     ## text boxes
     # stack display
@@ -180,9 +182,9 @@ def graphicsInit():
     stack_box.pack(expand=False, side=LEFT)
 
     # variable display
-    var_frame = Frame(tk, relief=frame_relief, borderwidth=1, height = 60)
+    var_frame = Frame(tk, relief=frame_relief, borderwidth=1, height=60)
     var_frame.pack(side=TOP, fill=X, expand=False)
-    var_frame.pack_propagate(0) # otherwise it wants to be chonky
+    var_frame.pack_propagate(0)  # otherwise it wants to be chonky
     var_box = Label(var_frame, height=20, width=80, text="", font=("Arial", 10))
     var_box.pack(expand=False)
     UpdateVarBox()
@@ -191,49 +193,56 @@ def graphicsInit():
     progframe = Frame(tk, relief=frame_relief, borderwidth=1)
     progframe.pack(fill=BOTH, expand=True)
     prog_box = Text(progframe, height=30, width=80)
-    prog_box.pack(fill=BOTH, expand=True, side=BOTTOM, padx = 10, pady = 5)
-    
+    prog_box.pack(fill=BOTH, expand=True, side=BOTTOM, padx=10, pady=5)
+
     ## buttons and midi
     global midi_in_names, midi_out_names, mi_var, mo_var
     UpdateMidiDevices()
 
     butt_frame = Frame(tk, relief=frame_relief, borderwidth=1, height=60)
     butt_frame.pack(fill=X, expand=False, side=BOTTOM)
-    butt_frame.pack_propagate(0) # otherwise it wants to be chonky
+    butt_frame.pack_propagate(0)  # otherwise it wants to be chonky
 
     #  push the buttons to the left
-    butt_pad_frame = Frame(butt_frame, relief=frame_relief, borderwidth=1, height=60, width=130 )
+    butt_pad_frame = Frame(
+        butt_frame, relief=frame_relief, borderwidth=1, height=60, width=130
+    )
     butt_pad_frame.pack(fill=X, expand=False, side=RIGHT)
-    butt_pad_frame.pack_propagate(0) # otherwise it wants to be chonky
+    butt_pad_frame.pack_propagate(0)  # otherwise it wants to be chonky
 
     # midi output dropdown
     mo_var = StringVar()
     mo_var.set(midi_out_names[0])
     mo_var.trace("w", setMidiOut)
     midi_out_drop = OptionMenu(butt_frame, mo_var, *midi_out_names)
-    midi_out_drop.pack(side=RIGHT, padx = 10, pady = 5)
+    midi_out_drop.pack(side=RIGHT, padx=10, pady=5)
 
     # midi input dropdown
     mi_var = StringVar()
     mi_var.set(midi_in_names[0])
     mi_var.trace("w", setMidiIn)
     midi_in_drop = OptionMenu(butt_frame, mi_var, *midi_in_names)
-    midi_in_drop.pack(side=RIGHT, padx = 10, pady = 5)
+    midi_in_drop.pack(side=RIGHT, padx=10, pady=5)
 
     # clk in checkbox
     clkin = BooleanVar()
     check = Checkbutton(
-        butt_frame, text="Clk In", variable=clkin, onvalue=True, offvalue=False, command=ClkOn
+        butt_frame,
+        text="Clk In",
+        variable=clkin,
+        onvalue=True,
+        offvalue=False,
+        command=ClkOn,
     )
-    check.pack(side=RIGHT, padx = 20, pady = 5)
+    check.pack(side=RIGHT, padx=20, pady=5)
 
     # stop button
     stopbutt = Button(butt_frame, text="Stop", command=stop)
-    stopbutt.pack(side=RIGHT, padx = 5, pady = 5)
+    stopbutt.pack(side=RIGHT, padx=5, pady=5)
 
     # start button
     butt = Button(butt_frame, text="Run", command=start)
-    butt.pack(side=RIGHT, padx = 10, pady = 5)
+    butt.pack(side=RIGHT, padx=10, pady=5)
 
 
 def UpdateMidiDevices():
