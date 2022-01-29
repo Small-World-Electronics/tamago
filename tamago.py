@@ -99,6 +99,7 @@ def midiOn():
         )
         timer.start()
     except:
+        print("Midi Error: Failed to send midi")
         pass
 
 
@@ -145,7 +146,7 @@ def goto(a):
                 linenum = line
                 lineidx = commidx
                 return True
-    print("no such label")
+    print("Jump Error: No such label")
     return False
 
 
@@ -530,11 +531,13 @@ def Parse():
     prog_data = Comments(prog_data)  # do comment stuff
 
     if prog_data == -1:
+        print("Parse Error: Malformed comment")
         return
 
     prog_data = Macros(prog_data)  # do macro stuff
 
     if prog_data == -1:
+        print("Parse Error: Bad macro")
         return
 
     # split into lines then tokenize
