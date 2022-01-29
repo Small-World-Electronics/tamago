@@ -521,8 +521,6 @@ def Parse():
     prog_data = prog_data.replace("\n", " ")
     prog_data = prog_data.replace("*", " CLK ")
 
-    print(prog_data)
-
     # short circuit on empty code
     lines = re.split("CLK", prog_data)  # split on CLK command
     if lines == [[""]]:
