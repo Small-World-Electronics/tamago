@@ -44,11 +44,12 @@ def PRINT():
 
 
 def BPM():
-    if len(commands.stack) < 1:
+    if commands.lencheck(1, "BPM"):
         return
     a = commands.POP()
     if a == 0:
-        commands.PUSH(a)  # divide by short circuit
+        print("BPM Error: BPM of 0 is invalid")
+        commands.PUSH(a)  # divide by 0 short circuit
         return
     global delay
     delay = 60.0 / a  # bpm = seconds / beat
@@ -64,21 +65,21 @@ def BRK():
 # just midi noteon for now. Eventually I'll support cc, osc, etc.
 # which of these does orca support and how?
 def DEO():
-    if len(commands.stack) < 2:
+    if commands.lencheck(2, "DEO"):
         return
 
     label = commands.POP()
     val = commands.POP()
 
     if type(label) != str:
-        print("label is not string", label)
+        print("DEO Error: Label is not string", label)
         return
     if label in dev_vals:
         dev_vals[label] = val
     elif label == ";midi":  # simply noteon for now
         midiOn()
     else:
-        print("no such device label", label)
+        print("DEO Error: No such device label", label)
 
 
 def midiOn():
@@ -110,24 +111,24 @@ def noteOff(note, channel):
 
 
 def JMP():
-    if len(commands.stack) < 1:
+    if commands.lencheck(1, "JMP"):
         return False
 
     a = commands.POP()
     if type(a) != str:
-        print("non string label", a)
+        print("JMP Error: Label is not a string", a)
         return False
     return goto(a)
 
 
 def JCN():
-    if len(commands.stack) < 2:
+    if commands.lencheck(2, "JCN"):
         return False
 
     label = commands.POP()
     con = commands.POP()
     if type(label) != str:
-        print("label is not a string!", label)
+        print("JCN Error: Label is not a string", label)
         return False
     if con:
         return goto(label)
