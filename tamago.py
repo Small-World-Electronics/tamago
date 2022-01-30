@@ -246,7 +246,7 @@ def graphicsInit():
         onvalue=True,
         offvalue=False,
         command=ClkOn,
-        bg=bg_color
+        bg=bg_color,
     )
     check.pack(side=RIGHT, padx=20, pady=5)
 
