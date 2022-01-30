@@ -482,6 +482,14 @@ def Macros(prog_data):
 
 
 def Comments(prog):
+    match = re.search("\(\S", prog)
+    if match != None:
+        return -1
+
+    match = re.search("\S\)", prog)
+    if match != None:
+        return -1
+
     # prog = re.sub('\( .* \)', '', prog)
     for i in range(len(prog) - 1):
         # search for '( '
