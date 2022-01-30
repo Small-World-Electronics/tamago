@@ -171,8 +171,12 @@ def graphicsInit():
         width=False, height=False
     )  # keep people from breaking the graphics for now
 
-    photo = PhotoImage(file="resources/tamago_icon.png")
-    tk.iconphoto(False, photo)
+    try:
+        photo = PhotoImage(file="resources/tamago_icon.png")
+        tk.iconphoto(False, photo)
+    except:
+        pass
+
     tk.title("tamago")
     frame_relief = FLAT  # set this to RAISED to see the frames
     bg_color = "#FCFFD7"
@@ -683,8 +687,11 @@ def Run():
 
     prog = []
     while True:
-        tk.update_idletasks()
-        tk.update()
+        try:
+            tk.update_idletasks()
+            tk.update()
+        except:
+            return
 
         if not running:
             # empty midi in queue
