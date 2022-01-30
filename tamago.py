@@ -175,24 +175,30 @@ def graphicsInit():
     tk.iconphoto(False, photo)
     tk.title("tamago")
     frame_relief = FLAT  # set this to RAISED to see the frames
+    bg_color = "#FCFFD7"
+    tk.configure(bg=bg_color)
 
     ## text boxes
     # stack display
-    stack_frame = Frame(tk, relief=frame_relief, borderwidth=1)
+    stack_frame = Frame(tk, relief=frame_relief, borderwidth=1, bg=bg_color)
     stack_frame.pack(side=LEFT, fill=NONE, expand=False)
-    stack_box = Label(stack_frame, height=30, width=10, text="", font=("Arial", 10))
+    stack_box = Label(
+        stack_frame, height=30, width=10, text="", font=("Arial", 10), bg=bg_color
+    )
     stack_box.pack(expand=False, side=LEFT)
 
     # variable display
-    var_frame = Frame(tk, relief=frame_relief, borderwidth=1, height=60)
+    var_frame = Frame(tk, relief=frame_relief, borderwidth=1, height=60, bg=bg_color)
     var_frame.pack(side=TOP, fill=X, expand=False)
     var_frame.pack_propagate(0)  # otherwise it wants to be chonky
-    var_box = Label(var_frame, height=20, width=80, text="", font=("Arial", 10))
+    var_box = Label(
+        var_frame, height=20, width=80, text="", font=("Arial", 10), bg=bg_color
+    )
     var_box.pack(expand=False)
     UpdateVarBox()
 
     #  program box
-    progframe = Frame(tk, relief=frame_relief, borderwidth=1)
+    progframe = Frame(tk, relief=frame_relief, borderwidth=1, bg=bg_color)
     progframe.pack(fill=BOTH, expand=True)
     prog_box = Text(progframe, height=30, width=80)
     prog_box.pack(fill=BOTH, expand=True, side=BOTTOM, padx=10, pady=5)
@@ -201,13 +207,18 @@ def graphicsInit():
     global midi_in_names, midi_out_names, mi_var, mo_var
     UpdateMidiDevices()
 
-    butt_frame = Frame(tk, relief=frame_relief, borderwidth=1, height=60)
+    butt_frame = Frame(tk, relief=frame_relief, borderwidth=1, height=60, bg=bg_color)
     butt_frame.pack(fill=X, expand=False, side=BOTTOM)
     butt_frame.pack_propagate(0)  # otherwise it wants to be chonky
 
     #  push the buttons to the left
     butt_pad_frame = Frame(
-        butt_frame, relief=frame_relief, borderwidth=1, height=60, width=130
+        butt_frame,
+        relief=frame_relief,
+        borderwidth=1,
+        height=60,
+        width=130,
+        bg=bg_color,
     )
     butt_pad_frame.pack(fill=X, expand=False, side=RIGHT)
     butt_pad_frame.pack_propagate(0)  # otherwise it wants to be chonky
@@ -235,6 +246,7 @@ def graphicsInit():
         onvalue=True,
         offvalue=False,
         command=ClkOn,
+        bg=bg_color
     )
     check.pack(side=RIGHT, padx=20, pady=5)
 
