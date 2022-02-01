@@ -1,3 +1,3 @@
 #!/bin/bash 
 
-pyinstaller -w -F -i "resources/tamago.png" tamago.py
+pyinstaller -w -F -i "resources/windows_icons/tamago.ico" tamago.py
