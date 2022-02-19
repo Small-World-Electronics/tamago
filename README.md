@@ -25,6 +25,15 @@ We also depend on tkinter, but I think that comes by default...
 - To the left is the stack display, where you can see the top 25 elements on the stack.  
 - Above is the contents of the first 8 variables. There are 256 available, but only the first 8 are displayed.  
 - Below are the main program controls.  
+- From left to right these are program run and stop
+- Clk In (clock from midi in when checked, internal clock when unchecked)
+- Midi In selector, Midi Out selector
+
+<img src="resources/readme/window.png" width="80%"/>
+
+## Using Midi
+- On Windows you'll need to download a loopback. I recommend [loopmidi](https://www.tobias-erichsen.de/software/loopmidi.html) by the wonderful Tobias Erichsen.  
+- On macOs you'll have to enable the internal IAC bus. You can find instructions for doing so [here](https://help.ableton.com/hc/en-us/articles/209774225-Setting-up-a-virtual-MIDI-bus), courtesy of the nice folks at Ableton.  
 
 ## Language
 
