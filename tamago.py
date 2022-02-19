@@ -167,9 +167,8 @@ def graphicsInit():
     tk = Tk()
     tk.geometry("700x700")
     # tk.minsize = (700, 700) this doesn't work...
-    tk.resizable(
-        width=False, height=False
-    )  # keep people from breaking the graphics for now
+    #tk.resizable(width=False, height=False)
+    # keep people from breaking the graphics for now
 
     try:
         photo = PhotoImage(file="resources/tamago_icon.png")
