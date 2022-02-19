@@ -4,7 +4,12 @@
 
 Livecoding music sequencer based on [uxn](https://wiki.xxiivv.com/site/uxn.html) and more loosely [Orca](https://github.com/hundredrabbits/Orca), both by the wonderful [Hundred Rabbits](https://github.com/hundredrabbits).
 
-## Running the Program
+## Download the prebuilt program
+
+Click on releases on the right hand side, then download the latest release for your OS.  
+Once you unzip the program, you can run it!
+
+## Running the Program from source
 
 First clone the repo with `git clone https://github.com/beserge/tamago`.  
 Next, move into that folder with `cd tamago`.  
