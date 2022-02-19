@@ -362,7 +362,6 @@ def midiClose():
 
 mapping = {
     "POP": commands.POP,
-    "PUSH": commands.PUSH,
     "ADD": commands.ADD,
     "SUB": commands.SUB,
     "MUL": commands.MUL,
