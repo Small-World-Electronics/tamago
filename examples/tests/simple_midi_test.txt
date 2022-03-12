@@ -1,0 +1,20 @@
+%NOTE { #0C MUL ADD } ( convert note, octave to midi note )
+
+#00 #00 STA
+
+@loop
+
+( load note inc and store )
+#00 LDA INC DUP
+#00 STA
+
+( send the note )
+#03 NOTE
+;note DEO
+#00 ;midi DEO
+
+( load note, jump while it's in range )
+#00 LDA #0B LTH
+
+CLK
+;loop JCN

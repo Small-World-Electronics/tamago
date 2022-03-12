@@ -1,0 +1,15 @@
+#00
+
+@loop
+
+INC DUP #05 EQU
+;ok JCN
+
+CLK
+;loop JMP
+
+( ok! )
+@ok
+
+POP
+#FEED
