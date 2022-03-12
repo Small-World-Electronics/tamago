@@ -44,7 +44,7 @@ def PRINT():
 
 
 def BPM():
-    if not (ret := commands.typecheckandpop(1, "BPM", int)):
+    if not (ret := commands.typecheckandpop(1, "BPM")):
         return
         
     if ret[0] == 0:
@@ -59,6 +59,7 @@ def BPM():
 
 # stop running
 def BRK():
+    PRINT()
     stop()
 
 
@@ -66,7 +67,7 @@ def BRK():
 # just midi noteon for now. Eventually I'll support cc, osc, etc.
 # which of these does orca support and how?
 def DEO():
-    if not (ret := commands.typecheckandpop(2, "DEO")):
+    if not (ret := commands.typecheckandpop(2, "DEO", False)):
         return
 
     label = commands.POP()
@@ -116,7 +117,7 @@ def noteOff(note, channel):
 
 
 def JMP():
-    if not (ret := commands.typecheckandpop(1, "JMP")):
+    if not (ret := commands.typecheckandpop(1, "JMP", False)):
         return False
 
     if not isinstance(ret[0], str):
@@ -127,7 +128,7 @@ def JMP():
 
 
 def JCN():
-    if not (ret := commands.typecheckandpop(2, "JCN")):
+    if not (ret := commands.typecheckandpop(2, "JCN", False)):
         return False
 
     label = ret[0]
@@ -352,15 +353,20 @@ def setMidiOut(*args):
 
 
 def start():
-    global running, linenum
+    global running, linenum, lineidx, prog
     linenum = 0
-    running = True
+    lineidx = 0
+    prog = []
     Parse()
+    running = True
 
 
 def stop():
-    global running
+    global running, linenum, lineidx, prog
     running = False
+    linenum = 0
+    lineidx = 0
+    prog = []
 
 
 def midiClose():
@@ -632,6 +638,9 @@ def ExecuteLine():
             if command():
                 thisline = prog[linenum]
                 continue  # skip the increment
+        elif command == BRK:
+            command()
+            return
         else:
             command()  # run commands
         lineidx += 1

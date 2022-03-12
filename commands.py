@@ -2,15 +2,15 @@ stack = []
 memory = [0 for i in range(256)]
 
 # check the stack has enough items, and their type, then pop them
-def typecheckandpop(length, funcname, type = "any"):
+def typecheckandpop(length, funcname, typecheck = True):
     if len(stack) < length:
         print(funcname + " Error: Too few items on stack")
         return []
     
-    if type != "any":
+    if typecheck:
         for i in range(length):
-            if not isinstance(stack[-i -1], type):
-                print(funcname, "Error:", stack[-1], 'is not of type', type)
+            if not isinstance(stack[-i -1], int):
+                print(funcname, "Error:", stack[-1], 'is not of type int.')
                 return []
 
     ret = [stack.pop() for i in range(length)]
@@ -18,7 +18,7 @@ def typecheckandpop(length, funcname, type = "any"):
 
 
 def POP():
-    if not (ret := typecheckandpop(1, "POP")):
+    if not (ret := typecheckandpop(1, "POP", False)):
         return  # short circuit if stack is empty
     return ret[0]
 
@@ -29,25 +29,25 @@ def PUSH(i):
 
 
 def ADD():
-    if not (ret := typecheckandpop(2, "ADD", int)):
+    if not (ret := typecheckandpop(2, "ADD")):
         return
     PUSH(ret[0] + ret[1])
 
 
 def SUB():
-    if not (ret := typecheckandpop(2, "SUB", int)):
+    if not (ret := typecheckandpop(2, "SUB")):
         return
     PUSH(ret[1] - ret[0])
 
 
 def MUL():
-    if not (ret := typecheckandpop(2, "MUL", int)):
+    if not (ret := typecheckandpop(2, "MUL")):
         return
     PUSH(ret[1] * ret[0])
 
 
 def DIV():
-    if not (ret := typecheckandpop(2, "DIV", int)):
+    if not (ret := typecheckandpop(2, "DIV")):
         return
 
     # short circuit on divide by 0
@@ -61,7 +61,7 @@ def DIV():
 
 
 def SFT():
-    if not (ret := typecheckandpop(2, "SFT", int)):
+    if not (ret := typecheckandpop(2, "SFT")):
         return
 
     left = (ret[0] & 0xF0) >> 4
@@ -74,7 +74,7 @@ def SFT():
 
 
 def MOD():
-    if not (ret := typecheckandpop(2, "MOD", int)):
+    if not (ret := typecheckandpop(2, "MOD")):
         return
 
     # short circuit on divide by 0
@@ -88,7 +88,7 @@ def MOD():
 
 
 def DUP():
-    if not (ret := typecheckandpop(1, "DUP")):
+    if not (ret := typecheckandpop(1, "DUP", False)):
         return
 
     PUSH(ret[0])
@@ -96,7 +96,7 @@ def DUP():
 
 
 def SWP():
-    if not (ret := typecheckandpop(2, "SWP")):
+    if not (ret := typecheckandpop(2, "SWP", False)):
         return
 
     PUSH(ret[0])
@@ -104,7 +104,7 @@ def SWP():
 
 
 def STA():
-    if not (ret := typecheckandpop(2, "STA", int)):
+    if not (ret := typecheckandpop(2, "STA")):
         return
 
     if ret[0] < 0 or ret[0] > 255:
@@ -114,7 +114,7 @@ def STA():
 
 
 def LDA():
-    if not (ret := typecheckandpop(1, "LDA", int)):
+    if not (ret := typecheckandpop(1, "LDA")):
         return
 
     if ret[0] < 0 or ret[0] > 255:
@@ -125,30 +125,30 @@ def LDA():
 
 
 def INC():
-    if not (ret := typecheckandpop(1, "INC", int)):
+    if not (ret := typecheckandpop(1, "INC")):
         return
 
     PUSH(ret[0] + 1)
 
 
 def DEC():
-    if not (ret := typecheckandpop(1, "DEC", int)):
+    if not (ret := typecheckandpop(1, "DEC")):
         return
 
     PUSH(ret[0] - 1)
 
 
 def NIP():
-    if not (ret := typecheckandpop(2, "NIP")):
+    if not (ret := typecheckandpop(2, "NIP", False)):
         return
 
-    POP()
+    # throw away ret[1]
     PUSH(ret[0])
 
 
 # a b -- a b a
 def OVR():
-    if not (ret := typecheckandpop(2, "OVR")):
+    if not (ret := typecheckandpop(2, "OVR", False)):
         return
 
     PUSH(ret[1])
@@ -158,7 +158,7 @@ def OVR():
 
 # a b c -- b c a
 def ROT():
-    if not (ret := typecheckandpop(3, "ROT")):
+    if not (ret := typecheckandpop(3, "ROT", False)):
         return
 
     PUSH(ret[1])
@@ -167,49 +167,49 @@ def ROT():
 
 
 def EQU():
-    if not (ret := typecheckandpop(2, "EQU")):
+    if not (ret := typecheckandpop(2, "EQU", False)):
         return
 
     PUSH(int(ret[1] == ret[0]))
 
 
 def NEQ():
-    if not (ret := typecheckandpop(2, "NEQ")):
+    if not (ret := typecheckandpop(2, "NEQ", False)):
         return
 
     PUSH(int(ret[1] != ret[0]))
 
 
 def GTH():
-    if not (ret := typecheckandpop(2, "GTH", int)):
+    if not (ret := typecheckandpop(2, "GTH")):
         return
 
     PUSH(int(ret[1] > ret[0]))
 
 
 def LTH():
-    if not (ret := typecheckandpop(2, "LTH", int)):
+    if not (ret := typecheckandpop(2, "LTH")):
         return
 
     PUSH(int(ret[1] < ret[0]))
 
 
 def AND():
-    if not (ret := typecheckandpop(2, "AND", int)):
+    if not (ret := typecheckandpop(2, "AND")):
         return
 
     PUSH(ret[1] & ret[0])
 
 
 def ORA():
-    if not (ret := typecheckandpop(2, "ORA", int)):
+    if not (ret := typecheckandpop(2, "ORA")):
         return
 
     PUSH(ret[1] | ret[0])
 
 
 def EOR():
-    if not (ret := typecheckandpop(2, "EOR", int)):
+    if not (ret := typecheckandpop(2, "EOR")):
         return
 
     PUSH(ret[1] ^ ret[0])
