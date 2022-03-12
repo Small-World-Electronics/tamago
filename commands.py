@@ -1,19 +1,26 @@
 stack = []
 memory = [0 for i in range(256)]
 
-
-def lencheck(length, funcname):
+# check the stack has enough items, and their type, then pop them
+def typecheckandpop(length, funcname, type = "any"):
     if len(stack) < length:
         print(funcname + " Error: Too few items on stack")
-        return True
-    return False
+        return []
+    
+    if type == "any":
+        for i in range(length):
+            if not isinstance(stack[-i -1], type):
+                print(funcname, "Error:", stack[-1], 'is not of type', type)
+                return []
+
+    ret = [stack.pop() for i in range(length)]
+    return ret
 
 
 def POP():
-    if lencheck(1, "POP"):
+    if not (ret := typecheckandpop(1, "POP")):
         return  # short circuit if stack is empty
-    a = stack.pop()
-    return a
+    return ret[0]
 
 
 # only used internally for now, in code it's just #100 for example
@@ -22,212 +29,190 @@ def PUSH(i):
 
 
 def ADD():
-    if lencheck(2, "ADD"):
+    if not (ret := typecheckandpop(2, "ADD", int)):
         return
-    b = POP()
-    a = POP()
-    PUSH(a + b)
+    PUSH(ret[0] + ret[1])
 
 
 def SUB():
-    if lencheck(2, "SUB"):
+    if not (ret := typecheckandpop(2, "SUB", int)):
         return
-    b = POP()
-    a = POP()
-    PUSH(a - b)
+    PUSH(ret[1] - ret[0])
 
 
 def MUL():
-    if lencheck(2, "MUL"):
+    if not (ret := typecheckandpop(2, "MUL", int)):
         return
-    b = POP()
-    a = POP()
-    PUSH(a * b)
+    PUSH(ret[1] * ret[0])
 
 
 def DIV():
-    if lencheck(2, "DIV"):
+    if not (ret := typecheckandpop(2, "DIV", int)):
         return
-    b = POP()
-    a = POP()
 
     # short circuit on divide by 0
-    if b == 0:
+    if ret[0] == 0:
         print("DIV Error: Divide by 0")
-        PUSH(a)
-        PUSH(b)
+        PUSH(ret[1])
+        PUSH(ret[0])
         return
 
-    PUSH(a // b)
+    PUSH(ret[1] // ret[0])
 
 
 def SFT():
-    if lencheck(2, "SFT"):
+    if not (ret := typecheckandpop(2, "SFT", int)):
         return
 
-    sft = POP()
-    val = POP()
+    left = (ret[0] & 0xF0) >> 4
+    right = ret[0] & 0x0F
 
-    left = (sft & 0xF0) >> 4
-    right = sft & 0x0F
+    ret[1] = ret[1] >> right
+    ret[1] = ret[1] << left
 
-    val = val >> right
-    val = val << left
-
-    PUSH(val)
+    PUSH(ret[1])
 
 
 def MOD():
-    if lencheck(2, "MOD"):
+    if not (ret := typecheckandpop(2, "MOD", int)):
         return
-    b = POP()
-    a = POP()
 
     # short circuit on divide by 0
-    if b == 0:
+    if ret[0] == 0:
         print("MOD Error: Divide by 0")
-        PUSH(a)
-        PUSH(b)
+        PUSH(ret[1])
+        PUSH(ret[0])
         return
 
-    a = a % b
-    PUSH(a)
+    PUSH(ret[1] % ret[0])
 
 
 def DUP():
-    if lencheck(1, "DUP"):
+    if not (ret := typecheckandpop(1, "DUP")):
         return
-    a = POP()
-    PUSH(a)
-    PUSH(a)
+
+    PUSH(ret[0])
+    PUSH(ret[0])
 
 
 def SWP():
-    if lencheck(2, "SWP"):
+    if not (ret := typecheckandpop(2, "SWP")):
         return
-    a = POP()
-    b = POP()
-    PUSH(a)
-    PUSH(b)
+
+    PUSH(ret[0])
+    PUSH(ret[1])
 
 
 def STA():
-    if lencheck(2, "STA"):
+    if not (ret := typecheckandpop(2, "STA", int)):
         return
-    add = POP()
-    val = POP()
-    if add < 0 or add > 255:
+
+    if ret[0] < 0 or ret[0] > 255:
         print("STA Error: Address out of range")
         return  # only allowing 255 vars for now
-    memory[add] = val
+    memory[ret[0]] = ret[1]
 
 
 def LDA():
-    if lencheck(1, "LDA"):
+    if not (ret := typecheckandpop(1, "LDA", int)):
         return
-    add = POP()
-    PUSH(memory[add])
+
+    if ret[0] < 0 or ret[0] > 255:
+        print("STA Error: Address out of range")
+        return  # only allowing 255 vars for now
+
+    PUSH(memory[ret[0]])
 
 
 def INC():
-    if lencheck(1, "INC"):
+    if not (ret := typecheckandpop(1, "INC", int)):
         return
-    a = POP() + 1
-    PUSH(a)
+
+    PUSH(ret[0] + 1)
 
 
 def DEC():
-    if lencheck(1, "DEC"):
+    if not (ret := typecheckandpop(1, "DEC", int)):
         return
-    a = POP() - 1
-    PUSH(a)
+
+    PUSH(ret[0] - 1)
 
 
 def NIP():
-    if lencheck(2, "NIP"):
+    if not (ret := typecheckandpop(2, "NIP")):
         return
-    a = POP()
+
     POP()
-    PUSH(a)
+    PUSH(ret[0])
 
 
 # a b -- a b a
 def OVR():
-    if lencheck(2, "OVR"):
+    if not (ret := typecheckandpop(2, "OVR")):
         return
-    b = POP()
-    a = POP()
-    PUSH(a)
-    PUSH(b)
-    PUSH(a)
+
+    PUSH(ret[1])
+    PUSH(ret[0])
+    PUSH(ret[1])
 
 
 # a b c -- b c a
 def ROT():
-    if lencheck(3, "ROT"):
+    if not (ret := typecheckandpop(3, "ROT")):
         return
-    c = POP()
-    b = POP()
-    a = POP()
-    PUSH(b)
-    PUSH(c)
-    PUSH(a)
+
+    PUSH(ret[1])
+    PUSH(ret[0])
+    PUSH(ret[2])
 
 
 def EQU():
-    if lencheck(2, "EQU"):
+    if not (ret := typecheckandpop(2, "EQU")):
         return
-    b = POP()
-    a = POP()
-    PUSH(int(a == b))
+
+    PUSH(int(ret[1] == ret[0]))
 
 
 def NEQ():
-    if lencheck(2, "NEQ"):
+    if not (ret := typecheckandpop(2, "NEQ")):
         return
-    b = POP()
-    a = POP()
-    PUSH(int(a != b))
+
+    PUSH(int(ret[1] != ret[0]))
 
 
 def GTH():
-    if lencheck(2, "GTH"):
+    if not (ret := typecheckandpop(2, "GTH", int)):
         return
-    b = POP()
-    a = POP()
-    PUSH(int(a > b))
+
+    PUSH(int(ret[1] > ret[0]))
 
 
 def LTH():
-    if lencheck(2, "LTH"):
+    if not (ret := typecheckandpop(2, "LTH", int)):
         return
-    b = POP()
-    a = POP()
-    PUSH(int(a < b))
+
+    PUSH(int(ret[1] < ret[0]))
 
 
 def AND():
-    if lencheck(2, "AND"):
+    if not (ret := typecheckandpop(2, "AND", int)):
         return
-    b = POP()
-    a = POP()
-    PUSH(a & b)
+
+    PUSH(ret[1] & ret[0])
 
 
 def ORA():
-    if lencheck(2, "ORA"):
+    if not (ret := typecheckandpop(2, "ORA", int)):
         return
-    b = POP()
-    a = POP()
-    PUSH(a | b)
+
+    PUSH(ret[1] | ret[0])
 
 
 def EOR():
-    if lencheck(2, "EOR"):
+    if not (ret := typecheckandpop(2, "EOR", int)):
         return
-    b = POP()
-    a = POP()
-    PUSH(a ^ b)
+
+    PUSH(ret[1] ^ ret[0])
 
 
 # I like this name better. Probably confusing to have two...

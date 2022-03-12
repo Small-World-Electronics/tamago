@@ -44,15 +44,16 @@ def PRINT():
 
 
 def BPM():
-    if commands.lencheck(1, "BPM"):
+    if not (ret := commands.typecheckandpop(1, "BPM", int)):
         return
-    a = commands.POP()
-    if a == 0:
+        
+    if ret[0] == 0:
         print("BPM Error: BPM of 0 is invalid")
-        commands.PUSH(a)  # divide by 0 short circuit
+        commands.PUSH(ret[0])  # divide by 0 short circuit
         return
+
     global delay
-    delay = 60.0 / a  # bpm = seconds / beat
+    delay = 60.0 / ret[0]  # bpm = seconds / beat
     delay /= 4  # sixteenth notes
 
 
@@ -65,14 +66,17 @@ def BRK():
 # just midi noteon for now. Eventually I'll support cc, osc, etc.
 # which of these does orca support and how?
 def DEO():
-    if commands.lencheck(2, "DEO"):
+    if not (ret := commands.typecheckandpop(2, "DEO")):
         return
 
     label = commands.POP()
     val = commands.POP()
 
-    if type(label) != str:
+    if not isinstance(label, str):
         print("DEO Error: Label is not string", label)
+        return
+    if not isinstance(val, int):
+        print("DEO Error: Value is not an int", label)
         return
     if label in dev_vals:
         dev_vals[label] = val
@@ -112,27 +116,32 @@ def noteOff(note, channel):
 
 
 def JMP():
-    if commands.lencheck(1, "JMP"):
+    if not (ret := commands.typecheckandpop(1, "JMP")):
         return False
 
-    a = commands.POP()
-    if type(a) != str:
-        print("JMP Error: Label is not a string", a)
+    if not isinstance(ret[0], str):
+        print("JMP Error: Label is not a string", ret[0])
         return False
-    return goto(a)
+
+    return goto(ret[0])
 
 
 def JCN():
-    if commands.lencheck(2, "JCN"):
+    if not (ret := commands.typecheckandpop(2, "JCN")):
         return False
 
-    label = commands.POP()
-    con = commands.POP()
-    if type(label) != str:
+    label = ret[0]
+    con = ret[1]
+
+    if not isinstance(label, str):
         print("JCN Error: Label is not a string", label)
+        return False
+    if not isinstance(con, int):
+        print("JCN Error: Conditional is not an int", label)
         return False
     if con:
         return goto(label)
+
     return False
 
 
@@ -718,4 +727,4 @@ def main():
     Run()
 
 
-main()
+# main()
