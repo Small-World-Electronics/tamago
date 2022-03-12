@@ -2,15 +2,15 @@ stack = []
 memory = [0 for i in range(256)]
 
 # check the stack has enough items, and their type, then pop them
-def typecheckandpop(length, funcname, typecheck = True):
+def typecheckandpop(length, funcname, typecheck=True):
     if len(stack) < length:
         print(funcname + " Error: Too few items on stack")
         return []
-    
+
     if typecheck:
         for i in range(length):
-            if not isinstance(stack[-i -1], int):
-                print(funcname, "Error:", stack[-1], 'is not of type int.')
+            if not isinstance(stack[-i - 1], int):
+                print(funcname, "Error:", stack[-1], "is not of type int.")
                 return []
 
     ret = [stack.pop() for i in range(length)]

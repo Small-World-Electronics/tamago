@@ -46,7 +46,7 @@ def PRINT():
 def BPM():
     if not (ret := commands.typecheckandpop(1, "BPM")):
         return
-        
+
     if ret[0] == 0:
         print("BPM Error: BPM of 0 is invalid")
         commands.PUSH(ret[0])  # divide by 0 short circuit
@@ -70,8 +70,8 @@ def DEO():
     if not (ret := commands.typecheckandpop(2, "DEO", False)):
         return
 
-    label = commands.POP()
-    val = commands.POP()
+    label = ret[0]
+    val = ret[1]
 
     if not isinstance(label, str):
         print("DEO Error: Label is not string", label)
@@ -177,7 +177,7 @@ def graphicsInit():
     tk = Tk()
     tk.geometry("700x700")
     # tk.minsize = (700, 700) this doesn't work...
-    #tk.resizable(width=False, height=False)
+    # tk.resizable(width=False, height=False)
     # keep people from breaking the graphics for now
 
     try:
