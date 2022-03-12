@@ -7,7 +7,7 @@ def typecheckandpop(length, funcname, type = "any"):
         print(funcname + " Error: Too few items on stack")
         return []
     
-    if type == "any":
+    if type != "any":
         for i in range(length):
             if not isinstance(stack[-i -1], type):
                 print(funcname, "Error:", stack[-1], 'is not of type', type)
