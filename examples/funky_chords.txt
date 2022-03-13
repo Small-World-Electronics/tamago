@@ -1,0 +1,28 @@
+CLS
+( make a minor triad from a root note )
+%MINOR { DUP #03 ADD SWP DUP #07 ADD }
+
+( make a major triad from a root note )
+%MAJOR { DUP #04 ADD SWP DUP #07 ADD SWP }
+
+( set the note in the fifth octave )
+%NOTE { #05 #0C MUL ADD ;note DEO }
+
+( send a midi noteon message )
+%MIDI { #00 ;midi DEO }
+
+( output a triad over midi )
+%TRIAD { NOTE MIDI NOTE MIDI NOTE MIDI }
+
+#03 ;len DEO
+
+@loop
+#00 MAJOR MINOR MAJOR MINOR
+
+TRIAD***
+TRIAD***
+TRIAD***
+***
+****
+;loop JMP
+
