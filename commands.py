@@ -218,3 +218,7 @@ def EOR():
 # I like this name better. Probably confusing to have two...
 def XOR():
     EOR()
+
+# clear the stack
+def CLS():
+    stack.clear()

@@ -98,7 +98,7 @@ def midiOn():
         # kill the note after a delay
         # this won't work right if call BPM before the cb triggers
         timer = Timer(
-            delay * dev_vals[";len"],
+            delay * dev_vals[";len"] - .02,
             noteOff,
             args=[dev_vals[";note"], dev_vals[";chn"]],
         )
@@ -406,6 +406,7 @@ mapping = {
     "JMP": JMP,
     "JCN": JCN,
     "BRK": BRK,
+    "CLS": commands.CLS,
 }
 
 # get the code that goes with that macro name
