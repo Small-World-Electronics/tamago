@@ -101,6 +101,7 @@ VAR1 LDA ( load variable one onto the stack )
 `*`: This is syntactic sugar for `CLK`. For example `INC**` == `INC CLK CLK`.  
 `BPM`: sets the quarter note clock speed in beats per minute. The actual ticks will happen 4 times faster (16th note clock)  
 `PRINT`: forces the stack and variable displays to update. Otherwise this only happens once per clock.  
+`CLS`: Clear all items from the stack
 
 ## Future Plans
 
