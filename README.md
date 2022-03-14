@@ -31,88 +31,205 @@ Using python 3 run `python tamago.py`
 ## Using Midi
 - On Windows you'll need to download a loopback. I recommend [loopmidi](https://www.tobias-erichsen.de/software/loopmidi.html) by the wonderful Tobias Erichsen.  
 - On macOs you'll have to enable the internal IAC bus. You can find instructions for doing so [here](https://help.ableton.com/hc/en-us/articles/209774225-Setting-up-a-virtual-MIDI-bus), courtesy of the nice folks at Ableton.  
-
-## Language
+## Language Primer
 
 The language is a modified version of the [uxntal](https://wiki.xxiivv.com/site/uxntal.html) used on the [Varvara Computer](https://wiki.xxiivv.com/site/varvara.html).
 
-If you're familiar with uxntal, here's a list of the things that work differently.
+### Hexadecimal
 
-#### Push
+Hexadecimal is a "base-16" number system. It is how we write numbers in uxntal.  
+If you're unfamiliar with hex, you can read up on it [here](https://computersciencewiki.org/index.php/Hexadecimal).  
 
-There is no `LIT` command. If you want to push a number on the stack, use the `#` syntactic sugar. 
+### What is a stack?
 
-That's `#2F` to push 0x2F onto the stack.
+A stack, otherwise referred to as a LIFO (Last In, First Out), is a type of data structure.  
+It is the main thing you are manipulating when programming in uxntal, and by extension in tamago.  
+You can visualize it like a stack of cards, or maybe pancakes, (or in our case data).  
 
-#### DEO / DEI
+The two basic operations you can do are putting something on top of the stack, or taking the top item off.  
+These are referred to as `PUSH` and `POP` respectively. You might hear someone say "just push it on the stack"!
 
-This is overloaded to work with midi ( and eventually OSC and so on ).
+In tamago we use the shorthand `#F7` to mean `PUSH` the number `0xF7` on the stack.
+We can use the `POP` command to remove the top item from the stack, and throw it away.
 
-| Command | Effect |
-| --- | --- |
-| `#50 ;note DEO` | Set the midi note value to 0x50 |
-| `#50 ;vel DEO` | Set the midi velocity value to 0x50 |
-| `#00 ;chn DEO` | Set the midi channel value to 0x00 |
-| `#02 ;len DEO` | Set the midi note length (in 16th notes) to 0x02 |
-| `#00 ;midi DEO` | Send a midi Note On message with the current settings |
+The left side of the screen in tamago is a display of the stack as of the last CLK command.  
+You can also force the stack display to update at any time using the `PRINT` command.  
+Additionally, you can read some more on stacks [here](https://computersciencewiki.org/index.php/Stack) if it is still unclear.
 
-`;midi DEO` will be extended soon with options for note off, control messages, etc.
+### How do the commands work with the stack?
 
-#### Labels
+If you are familiar with the concept of Reverse Polish Notation, this will be familiar to you!  
+If not, have no fear it is quite simple.  
 
-These aren't really memory locations like they are in the full implementation, so no fun math tricks here! These are simply to be used as locations for the jump instructions.
+It will be easiest to explain this with an example. Say you want to divide `0x09` by `0x03`  
+Here is how we can do this in uxn.
 
-The only label available borrows from the literal address absolute notation.  
-That's `@label` to create a label and `;label` to push it onto the stack
-
-So to create a loop for example: 
+```uxntal
+#09 ( push 0x09 on the stack )
+#03 ( push 0x03 on the stack )
+DIV ( divide 0x09 / 0x03, and push the result on the stack )
 ```
+
+That's it!  
+It's important to note the order of operations here.  
+The item further down 
+
+
+
+stack goes to the left, and the operator goes between.  
+
+### Labels
+
+In my modified uxntal, labels are used for two purposes:
+
+1. Referring to points to jump to with `JMP` and `JCN`
+2. Interacting with midi via `DEO`
+
+Labels can be pushed and popped from the stack just like integers.
+You can read more about the commands that use labels in the Language Reference.  
+
+### Comments
+
+Comments are nested between parenthesis.  
+Make sure to include a space between the parenthesis and the comment!  
+  
+`#01 ( Push 0x01 on the stack )`
+  
+### Macros
+
+Macros are reusable bits of code. They are given a name, and a code body.
+They can be used in your code simply by writing the name.  
+```uxntal
+%ADD_TWO { #02 ADD }   ( this macro adds 0x02 to the item on the stack )
+
+#03 ( push 0x03 on the stack )
+ADD_TWO ( add two to it using our macro )
+```
+
+You can also use macros inside of other macros!  
+```uxntal
+%NUM { #02 }   ( this macro pushed 0x02 on the stack )
+%ADD_NUM { NUM ADD }   ( this macro adds 0x02 to the item on the stack )
+
+#03   ( push 0x03 on the stack )
+ADD_NUM   ( add two to it using our macro )
+```
+### Variables
+
+You can store and load data for safe keeping in a few variable slots.  
+You can see the variable storage (as of the last clock tick) at the top of the screen.  
+The `PRINT` command will force this screen to update.  
+The `LDA` and `STA` commands are used to store and load data from these variable slots.  
+You can read more on them below in the Language Reference.  
+
+## Language Reference
+
+### Stack Manipulation
+
+- `#0C` Pushes a hexidecimal number onto the top of the stack. In this case we will end up with 0x0C, or 12 on top.
+- `POP` Removes item on top of the stack and throws it away! `a --` 
+- `NIP` Removes the second item from the stack. `a b -- a`
+- `DUP` Duplicates the item on top of the stack. `a -- a a`
+- `OVR` Duplicates the top item to the third slot. `a b -- a b a`
+- `SWP` Swaps the two items on top of the stack. `a b -- b a`
+- `ROT` Rotates the stack elements (up one slot). The top element wraps around. `a b c -- b c a`
+
+### Math
+- `INC` Add 1 to the top element. `a -- (a + 1)` `0x0C -- 0x0D`
+- `ADD` Add the top two elements and push the result. `a b -- (a + b)` `0x02 0x03 -- 0x05`
+- `SUB` Subtract the top two elements and push the result. `a b -- (a-b)` `0x05 0x03 -- 0x02`
+- `MUL` Multiply the top two elements and push the result. ` a b -- (a*b)` `0x03 0x02 -- 0x06`
+- `DIV` Divide the top two elements and push the result. `a b -- (a/b)` `0x08 0x02 -- 0x04`
+
+### Logic
+These operate on the top two items, pushing 0x01 if the operation is true, and 0x00 if it is not.
+
+- `EQU` a is equal to b. `a b -- (a==b)` `0x03 0x04 -- 0x00` `0x05 0x05 -- 0x01`
+- `NEQ` a is not equal to b. `a b -- (a!=b)` `0x03 0x04 -- 0x01` `0x05 0x05 -- 0x00`
+- `GTH` a is greater than b. `a b -- (a>b)` `0x05 0x02 -- 0x01` `0x02 0x05 -- 0x00`
+- `LTH` a is less than b. `a b -- (a < b)` `0x05 0x02 -- 0x00` `0x02 0x05 -- 0x01`
+
+### Bitwise Operators
+Twiddle some bits! These operate on the binary representation of numbers.
+
+- `AND` Bitwise and of a, b. `a b -- (a&b)` `0x05 0x06 -- 0x04`
+- `ORA` Bitwise or of a, b. `a b -- (a|b)` `0x05 0x06 -- 0x07`
+- `EOR` Exclusive or of a, b. `a b -- (a^b)` `0x05 0x06 -- 0x03`
+- `SFT` Bitshift the a by the control value b. b is seperated into a high and low nibble. If b is 0x12, 1 is the high nibble, and 2 is the low nibble.
+        a is shifted right by the low nibble, then left by the high nibble. `a b -- c` 
+        `0x04 0x01 -- 0x02`
+        `0x04 0x10 -- 0x08`
+        `0x04 0x11 -- 0x04`
+
+### Variables
+
+We include a simple system for storing and retrieving data off of the stack for later.  
+We use integer addresses to refer to the different variables.  
+There are 128 slots as of now, and the first 8 are displayed at the top of the screen.  
+
+- `LDA` Load the item from the specified address. `a --`
+- `STA` Store data a in address b. `a b --`
+
+### Jumps
+- `JMP` Jump to the label specified. `a --`
+  - An infinite loop:
+
+```uxntal
 @loop
-( do something here )
+( do this forever... )
 ;loop JMP
 ```
 
-Labels are also overloaded for the DEO / DEI midi implementation. Check that section for more details.
+- `JCN` Jump, if the conditional is not 0. `a b --`
+  - Loops 5 times:
 
-#### STA / LDA
+```uxntal
+#00
 
-This is overloaded with a simple store / load system for variables. There are 128 slots available to store integers. If you want to label your variables, for now the best way is with a macro.
+@loop
 
+INC ( Increment the counter )
+DUP ( Duplicate the counter)
+#05 LTH ( If the counter < 5 push a 1, else push a 0 )
+
+CLK ( wait for a clock tick )
+;loop JCN ( if there is a 1 on the stack, jump to @loop, else keep going )
 ```
-%VAR1 { #00 } ( variable 1 )
 
-#04 VAR1 STA ( store 0x04 in variable 1 )
-VAR1 LDA ( load variable one onto the stack )
-```
+### Midi
+Midi funcionality all uses `DEO` or "DEvice Out".
 
-#### Missing Commands / things
+| Command | Effect |
+| --- | --- |
+| `#50 ;note DEO` | Set the midi note value to `0x50` |
+| `#50 ;vel DEO` | Set the midi velocity value to `0x50` |
+| `#00 ;chn DEO` | Set the midi channel value to `0x00` |
+| `#02 ;len DEO` | Set the midi note length (in 16th notes) to `0x02` |
+| `#00 ;midi DEO` | Send a midi Note On message with the current settings |
 
-- The return stack hasn't been implemented (yet). `STH` therefore is not implemented.
-- `LDZ / STZ`, `LDR / STR`. Addresses aren't really a thing as such, so we just use `STA / LDA` as described above.
-- `| . $ , & : ' ~ "` We have no need for these things as of yet.
-- Short versions of commands. 
+### Clock and Tempo
+- `BPM` Set the BPM in beats per second. The clock defaults to 16th notes. 
+  - `#50 BPM` will set the clock to sixteenth notes at 80 bpm.
+- `CLK` pauses until the next clock tick. Can also be written as `*`
+  - `#00 INC***` will push `0x00 ` on the stack, increment it, then wait three ticks.
 
-#### New Commands!
+### Et Cetera
+- `BRK` Stops the program.
+- `CLS` Clear the stack.
+- `PRINT` Force the stack / memory displays to update.  
 
-`CLK`: waits until the next clock pulse. Also updates the stack and variable displays.   
-`*`: This is syntactic sugar for `CLK`. For example `INC**` == `INC CLK CLK`.  
-`BPM`: sets the quarter note clock speed in beats per minute. The actual ticks will happen 4 times faster (16th note clock)  
-`PRINT`: forces the stack and variable displays to update. Otherwise this only happens once per clock.  
-`CLS`: Clear all items from the stack
+The Language section here was partially based on the [uxntal reference](https://wiki.xxiivv.com/site/uxntal_reference.html).
 
-## Future Plans
+### Gotchas
 
-- Add Midi ctrl, noteoff, pitchbend, etc. To `DEO`
-- Add `DEI`
-- Add OSC compatability
-- Add clock out
-- Improve graphics
-- Create executable / installer / make it portable
-- Unit testing
-- Implement the return stack
-- File load / write
-- Beginner's guide to my modified uxntal.
-- Make two clicks of stop / run behave how they should. (todo)
+If you are already familiar with uxntal, you'll find the following differences here:  
+- No return stack. No `STH`.  
+- No keep mode.  
+- No difference between shorts and bytes. All numbers are actually python ints ;)  
+- Memory addresses aren't actually bytes. You have to jump to your label since the `;label` is just a string.    
+- No zero page, relative, abs, etc. The `LDA/STA` have been overloaded with simple variable storage.  
+- | . $ , & : ' ~ " We have no need for these things as of yet.
+- No `LIT` command, just use `#` to push number on the stack.  
 
 ## More Important Details
 
@@ -126,8 +243,22 @@ As of the time of writing:
 - Tick the Clock In box to sync the clock to your midi in source.
 - There are midi I/O selection dropdowns at the bottom. These are populated on launch, so any midi devices must be ready to go when you launch the app.
 
+## Future Plans
+
+- Add Midi ctrl, noteoff, pitchbend, etc. To `DEO`
+- Add `DEI`
+- Add OSC compatability
+- Add clock out
+- Improve graphics
+- Create executable / installer / make it portable
+- Unit testing
+- Implement the return stack
+- File load / write
+- Make two clicks of stop / run behave how they should. (todo)
+
 ## Further Reading
 
 - For more language info, see this _excellent_ guide to [uxntal on Varvara](https://compudanzas.net/uxn_tutorial_day_1.html).  
 - Read some example programs in this repo's examples folder. Feel free to submit any you come up with!  
 - Check out the macros.md file for a list of useful macros. Feel free to submit your own!  
+
