@@ -11,14 +11,11 @@ Once you unzip the program, you can run it!
 
 ## Running the Program from source
 
-First clone the repo with `git clone https://github.com/beserge/tamago`.  
-Next, move into that folder with `cd tamago`.  
-Using python 3 run `python tamago.py`.  
+First clone the repo with `git clone https://github.com/beserge/tamago`  
+Next, move into that folder with `cd tamago`  
+Install the dependencies with `pip install -r requirements.txt`  
+Using python 3 run `python tamago.py`  
   
-The one dependency right now is pygame for its midi capablities.  
-You can install that with `pip install pygame`  
-We also depend on tkinter, but I think that comes by default...
-
 ## Program Layout
 
 - The main area is a large box where you type in your code.  
