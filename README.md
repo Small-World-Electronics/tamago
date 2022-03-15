@@ -2,6 +2,9 @@
 
 <img src="resources/tamago.png" width="20%"/>
 
+Q: When did the Japanese start eating eggs?  
+A: A long [tamago](https://jisho.org/search/tamago)!
+
 ## What is it?
 
 tamago is a livecoding platform for controlling musical events in time.  
