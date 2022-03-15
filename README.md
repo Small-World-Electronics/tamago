@@ -12,7 +12,7 @@ uxn is a stack oriented computer, with an intentionally easy to understand desig
 
 ## Backstory
 
-In November of 2021, I discovered compudanza's [one week tutorial program]((https://compudanzas.net/uxn_tutorial.html) for learning uxn.  
+In November of 2021, I discovered compudanza's [one week tutorial program](https://compudanzas.net/uxn_tutorial.html) for learning uxn.  
 I highly recommend going through that tutorial too!  
 Through that week or so I wrote some simple little programs, some of which you can [look over here](/projects/uxn.html).  
   
