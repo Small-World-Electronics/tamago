@@ -2,7 +2,25 @@
 
 <img src="resources/tamago.png" width="20%"/>
 
-Livecoding music sequencer based on [uxn](https://wiki.xxiivv.com/site/uxn.html) and more loosely [Orca](https://github.com/hundredrabbits/Orca), both by the wonderful [Hundred Rabbits](https://github.com/hundredrabbits).
+## What is it?
+
+tamago is a livecoding platform for controlling musical events in time.  
+It does this via midi I/O.  
+You might think of it as a sequencer you program in assembly!  
+The language it uses is a modified uxntal, the language used in Hundred Rabbit's [uxn project](https://100r.co/site/uxn.html).  
+uxn is a stack oriented computer, with an intentionally easy to understand design.  
+
+## Backstory
+
+In November of 2021, I discovered compudanza's [one week tutorial program]((https://compudanzas.net/uxn_tutorial.html) for learning uxn.  
+I highly recommend going through that tutorial too!  
+Through that week or so I wrote some simple little programs, some of which you can [look over here](/projects/uxn.html).  
+  
+I've found in my life that when I happen on an interesting idea, or technology, my first thought is always, "how can I make music with this?", and this project was not unique in that respect.  
+At the time [Varvara](https://wiki.xxiivv.com/site/varvara.html) did not support midi, though that has since changed!  
+Therefore, I set out to write a simple uxntal interpreter, so one could sequence midi events, by livecoding in a modified uxntal.  
+tamago is the result of that work.  
+
 
 ## Download the prebuilt program
 
